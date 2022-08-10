@@ -49,17 +49,32 @@ class RevenueService(
 
         logger.info("$TAG, method: validatesRegistrationRecipe, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
 
-        val dateRequestMonth = date.toString()[5].toString() + date.toString()[6].toString()
-
         val obj = revenueRepository.findByDescription(description)
 
-        if (obj.isEmpty) {
+        if (obj.isEmpty()) {
             return true
         }
 
-        val entityMonthDate = obj.get().date.toString()[5].toString() + obj.get().date.toString()[6]
+        obj.forEach {
+            if (it.date.month == date.month && it.date.year == date.year ) {
+                return false
+            }
+        }
+        return true
 
-        return !(obj.isPresent && dateRequestMonth == entityMonthDate)
+    }
+
+    @Transactional(readOnly = true)
+    fun findAll(): Response<List<RevenueResponseDTO>> {
+
+        logger.info("$TAG, method: findAll, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+
+        val list = revenueRepository.findAll()
+        val dto = list.map { revenue -> RevenueResponseDTO(revenue) }
+
+        logger.info("$TAG, method: findAll SUCCESS, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+
+        return Response(dto)
 
     }
 

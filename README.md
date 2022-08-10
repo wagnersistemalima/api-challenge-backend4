@@ -10,3 +10,38 @@ aplicação para controle de orçamento familiar.
 * Validações feitas conforme as regras de negócio;
 * Implementação de base de dados para persistência das informações;
 * Serviço de autenticação/autorização para restringir acesso às informações.
+
+
+## Metodologia agil Trello
+
+* Ferramenta para gerenciar o desenvolvimento do projeto
+![sprint active](/image/sprintActive.png)
+
+## Setup do Projeto
+* Linguagem de programação: Kotlin
+* Tecnologia: Spring Boot 2.7.2
+* Gerenciador de dependência: Maven
+* Java 11
+* IDE IntelJ
+
+
+## Implementação utilizando as ferramentas do ecossistema Spring com Kotlin
+
+
+* Spring Web: Crie aplicativos da web, incluindo RESTful, usando Spring MVC. Usa Apache Tomcat como o contêiner integrado padrão.
+
+* Bean Validation: é uma especificação que permite validar objetos com facilidade em diferentes camadas da aplicação. A vantagem de usar Bean Validation é que as restrições ficam inseridas nas classes de modelo.
+
+* H2: Banco de dados em memória, para testes
+
+* MySQL: banco de desenvolvimento
+
+* Spring Data JPA: Especificação da biblioteca padrão de persistência de dados no java, baseado no mapeamento objeto relacional (javax.percistence)
+
+* Hibernate: É uma das implementações da especificação JPA mais popular
+
+* Especificação: (javax.persistence.Enty) É uma boa prática fazer o código com base na especificação, pois caso depois precise trocar a implementação Hibernate por outra implementação, a aplicação continuará funcionando
+
+* Testes unitarios utilizando o MockK, que é uma ferramenta aqui do Kotlin que vem ganhando bastante espaço no mercado.
+
+ 

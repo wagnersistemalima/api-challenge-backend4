@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -42,8 +43,19 @@ class RevenueController(
 
         val uri = uriBuilder.path("/receitas/${response.data.id}").build().toUri()
 
-        logger.info("$TAG, method: create [POST], ${ProcessingResult.END_PROCESS}")
+        logger.info("$TAG, method: create SUCCESS [POST], ${ProcessingResult.END_PROCESS}")
 
         return ResponseEntity.created(uri).body(response)
+    }
+
+    @GetMapping
+    fun findAll(): ResponseEntity<Response<List<RevenueResponseDTO>>> {
+
+        logger.info("$TAG, method: findAll, ${ProcessingResult.START_PROCCESS}")
+
+        val response = revenueService.findAll()
+
+        logger.info("$TAG, method: findAll SUCCESS, ${ProcessingResult.END_PROCESS}")
+        return ResponseEntity.ok().body(response)
     }
 }

@@ -2,9 +2,11 @@ package br.com.sistemalima.apiorcamentofamiliar.service.controller
 
 import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueRequestDTO
 import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueResponseDTO
+import br.com.sistemalima.apiorcamentofamiliar.model.Revenue
 import br.com.sistemalima.apiorcamentofamiliar.request.Request
 import br.com.sistemalima.apiorcamentofamiliar.response.Response
 import br.com.sistemalima.apiorcamentofamiliar.service.RevenueService
+import br.com.sistemalima.apiorcamentofamiliar.service.util.ListRevenueFixture
 import br.com.sistemalima.apiorcamentofamiliar.service.util.RevenueRequestDTOFixture
 import br.com.sistemalima.apiorcamentofamiliar.service.util.RevenueResponseDTOFixture
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -37,10 +39,11 @@ class RevenueControlerTest {
     private lateinit var revenueService: RevenueService
 
     private val uriPost = "/receitas"
+    private val uriGet = "/receitas"
 
 
     @Test
-    fun `should return status 201`() {
+    fun `create POST should return status 201`() {
 
         val request = RevenueRequestDTOFixture.build()
         val revenueEntity = request.data.toModel()
@@ -56,7 +59,7 @@ class RevenueControlerTest {
     }
 
     @Test
-    fun `should return status 400, when description is not empty`() {
+    fun `create POST should return status 400, when description is not empty`() {
 
         val request = Request(
             data = RevenueRequestDTO(
@@ -72,7 +75,7 @@ class RevenueControlerTest {
     }
 
     @Test
-    fun `should return status 400, when the description is null`() {
+    fun `create POST should return status 400, when the description is null`() {
 
         val request = Request(
             data = RevenueRequestDTO(
@@ -88,7 +91,7 @@ class RevenueControlerTest {
     }
 
     @Test
-    fun `should return status 400, when the value is negative`() {
+    fun `create POST should return status 400, when the value is negative`() {
 
         val request = Request(
             data = RevenueRequestDTO(
@@ -104,7 +107,7 @@ class RevenueControlerTest {
     }
 
     @Test
-    fun `should return status 400, when value is null`() {
+    fun `create POST should return status 400, when value is null`() {
 
         val request = Request(
             data = RevenueRequestDTO(
@@ -120,7 +123,7 @@ class RevenueControlerTest {
     }
 
     @Test
-    fun `should return status 400, when date is null`() {
+    fun `create POST should return status 400, when date is null`() {
 
         val request = Request(
             data = RevenueRequestDTO(
@@ -135,11 +138,46 @@ class RevenueControlerTest {
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 
+    @Test
+    fun `deve retornar 200 com uma lista de dto receitas`() {
+
+        val list = ListRevenueFixture.build()
+        val dto = list.map { revenue -> RevenueResponseDTO(revenue) }
+        val response = Response(data = dto)
+
+        Mockito.`when`(revenueService.findAll()).thenReturn(response)
+
+        mockMvc.perform(MockMvcRequestBuilders.get(uriGet)
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json(toJsonListResponse(response)))
+
+    }
+
+    @Test
+    fun `deve retornar 200 com uma lista de dto vazio quando nao tiver receitas cadastradas`() {
+
+        val list = listOf<Revenue>()
+        val dto = list.map { revenue -> RevenueResponseDTO(revenue) }
+        val response = Response(data = dto)
+
+        Mockito.`when`(revenueService.findAll()).thenReturn(response)
+
+        mockMvc.perform(MockMvcRequestBuilders.get(uriGet)
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json(toJsonListResponse(response)))
+    }
+
     private fun toJson(request: Request<RevenueRequestDTO>): String {
         return objectMapper.writeValueAsString(request)
     }
 
     private fun toJsonResponse(response: Response<RevenueResponseDTO>): String {
+        return objectMapper.writeValueAsString(response)
+    }
+
+    private fun toJsonListResponse(response: Response<List<RevenueResponseDTO>>): String {
         return objectMapper.writeValueAsString(response)
     }
 }
