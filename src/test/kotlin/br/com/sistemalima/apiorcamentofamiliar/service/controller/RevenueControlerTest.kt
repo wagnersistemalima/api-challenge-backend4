@@ -2,6 +2,7 @@ package br.com.sistemalima.apiorcamentofamiliar.service.controller
 
 import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueRequestDTO
 import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueResponseDTO
+import br.com.sistemalima.apiorcamentofamiliar.exceptions.EntityNotFoundException
 import br.com.sistemalima.apiorcamentofamiliar.model.Revenue
 import br.com.sistemalima.apiorcamentofamiliar.request.Request
 import br.com.sistemalima.apiorcamentofamiliar.response.Response
@@ -21,6 +22,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.web.util.UriComponentsBuilder
 import java.time.LocalDate
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -139,7 +141,7 @@ class RevenueControlerTest {
     }
 
     @Test
-    fun `deve retornar 200 com uma lista de dto receitas`() {
+    fun `findAll GET should return 200 with a list of dto recipes`() {
 
         val list = ListRevenueFixture.build()
         val dto = list.map { revenue -> RevenueResponseDTO(revenue) }
@@ -155,7 +157,7 @@ class RevenueControlerTest {
     }
 
     @Test
-    fun `deve retornar 200 com uma lista de dto vazio quando nao tiver receitas cadastradas`() {
+    fun `findAll GET hould return 200 with an empty dto list when there are no registered recipes`() {
 
         val list = listOf<Revenue>()
         val dto = list.map { revenue -> RevenueResponseDTO(revenue) }
@@ -167,6 +169,34 @@ class RevenueControlerTest {
             .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.content().json(toJsonListResponse(response)))
+    }
+
+    @Test
+    fun `findById GET should return 200 when passing an existing id`() {
+
+        val response = RevenueResponseDTOFixture.build()
+        val uri = UriComponentsBuilder.fromUriString("/receitas/{id}").buildAndExpand(response.data.id).toUri()
+
+
+        Mockito.`when`(revenueService.findById(response.data.id!!)).thenReturn(response)
+
+        mockMvc.perform(MockMvcRequestBuilders.get(uri)
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json(toJsonResponse(response)))
+    }
+
+    @Test
+    fun `findById GET should return 404 when passing an id that does not exist`() {
+
+        val idNotexist = 5000L
+        val uri = UriComponentsBuilder.fromUriString("/receitas/{id}").buildAndExpand(idNotexist).toUri()
+
+        Mockito.`when`(revenueService.findById(idNotexist)).thenThrow(EntityNotFoundException("Entity not found"))
+
+        mockMvc.perform(MockMvcRequestBuilders.get(uri)
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(MockMvcResultMatchers.status().isNotFound)
     }
 
     private fun toJson(request: Request<RevenueRequestDTO>): String {

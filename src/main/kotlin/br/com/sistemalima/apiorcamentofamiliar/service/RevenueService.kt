@@ -3,6 +3,7 @@ package br.com.sistemalima.apiorcamentofamiliar.service
 import br.com.sistemalima.apiorcamentofamiliar.constant.ProcessingResult
 import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueResponseDTO
 import br.com.sistemalima.apiorcamentofamiliar.exceptions.BadRequestException
+import br.com.sistemalima.apiorcamentofamiliar.exceptions.EntityNotFoundException
 import br.com.sistemalima.apiorcamentofamiliar.model.Revenue
 import br.com.sistemalima.apiorcamentofamiliar.repository.RevenueRepository
 import br.com.sistemalima.apiorcamentofamiliar.response.Response
@@ -76,6 +77,20 @@ class RevenueService(
 
         return Response(dto)
 
+    }
+
+    @Transactional(readOnly = true)
+    fun findById(id: Long): Response<RevenueResponseDTO> {
+        logger.info("$TAG, method: findById id: $id, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+
+        val revenueDb = revenueRepository.findById(id).orElseThrow {
+            logger.error("ERROR $TAG, method: findById id: $id, message: ${ProcessingResult.ENTITY_NOT_FOUND_MESSAGE}")
+            throw EntityNotFoundException(ProcessingResult.ENTITY_NOT_FOUND_MESSAGE)
+        }
+
+        logger.info("$TAG, method: findById id: $id SUCCESS, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+
+        return Response(data = RevenueResponseDTO(revenueDb))
     }
 
 }

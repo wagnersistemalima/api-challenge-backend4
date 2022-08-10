@@ -10,13 +10,12 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import org.springframework.web.util.UriComponentsBuilder
 import javax.validation.Valid
 
@@ -56,6 +55,17 @@ class RevenueController(
         val response = revenueService.findAll()
 
         logger.info("$TAG, method: findAll SUCCESS, ${ProcessingResult.END_PROCESS}")
+        return ResponseEntity.ok().body(response)
+    }
+
+    @GetMapping(path = ["/{id}"])
+    fun findById(@PathVariable id: Long): ResponseEntity<Response<RevenueResponseDTO>> {
+
+        logger.info("$TAG, method: findById id: $id, ${ProcessingResult.START_PROCCESS}")
+
+        val response = revenueService.findById(id)
+
+        logger.info("$TAG, method: findById id: $id SUCCESS, ${ProcessingResult.START_PROCCESS}")
         return ResponseEntity.ok().body(response)
     }
 }

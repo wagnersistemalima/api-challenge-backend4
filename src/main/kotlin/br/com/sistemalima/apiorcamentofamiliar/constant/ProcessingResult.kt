@@ -7,5 +7,6 @@ class ProcessingResult {
         const val GET_MOVIMENT_REQUEST = "Movimentação do processo request"
         const val END_PROCESS = "Fim do processo request"
         const val BAD_REQUEST_MESSAGE = "receita contendo descrição neste mes já cadastrada"
+        const val ENTITY_NOT_FOUND_MESSAGE = "recurso não encontrado"
     }
 }
