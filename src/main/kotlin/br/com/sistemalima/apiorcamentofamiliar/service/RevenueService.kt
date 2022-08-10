@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 
 @Service
 class RevenueService(
@@ -27,11 +28,16 @@ class RevenueService(
 
         logger.info("$TAG, method: create, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
 
-        val validRecipe = validatesRegistrationRecipe(revenueEntity)
+        val status = revenueRuleValidation(revenueEntity.description, revenueEntity.date)
 
-        revenueRepository.save(validRecipe)
+        if (!status) {
+            throw BadRequestException(ProcessingResult.BAD_REQUEST_MESSAGE)
+        }
 
-        val response = RevenueResponseDTO(validRecipe)
+
+        revenueRepository.save(revenueEntity)
+
+        val response = RevenueResponseDTO(revenueEntity)
 
         logger.info("$TAG, method: create SUCCESS, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
 
@@ -39,32 +45,22 @@ class RevenueService(
     }
 
     @Transactional(readOnly = true)
-    private fun validatesRegistrationRecipe(revenueEntity: Revenue): Revenue {
+    fun revenueRuleValidation(description: String, date: LocalDate): Boolean {
 
         logger.info("$TAG, method: validatesRegistrationRecipe, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
 
-        val date = revenueEntity.date
-        val description = revenueEntity.description
         val dateRequestMonth = date.toString()[5].toString() + date.toString()[6].toString()
 
         val obj = revenueRepository.findByDescription(description)
 
         if (obj.isEmpty) {
-            return revenueEntity
+            return true
         }
 
         val entityMonthDate = obj.get().date.toString()[5].toString() + obj.get().date.toString()[6]
 
-        if (obj.isPresent && dateRequestMonth == entityMonthDate) {
-            logger.error("ERROR: $TAG, method: create, message: ${ProcessingResult.BAD_REQUEST_MESSAGE}")
-            throw BadRequestException(ProcessingResult.BAD_REQUEST_MESSAGE)
-        }
-
-        logger.info("$TAG, method: validatesRegistrationRecipe SUCCESS, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
-
-        return revenueEntity
+        return !(obj.isPresent && dateRequestMonth == entityMonthDate)
 
     }
-
 
 }
