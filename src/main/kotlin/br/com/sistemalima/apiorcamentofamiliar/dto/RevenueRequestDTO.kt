@@ -7,10 +7,12 @@ import java.time.LocalDate
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Positive
+import javax.validation.constraints.Size
 
 data class RevenueRequestDTO(
 
     @field:NotBlank
+    @field:Size(max = 100)
     @JsonProperty("descricao")
     val description: String?,
 
@@ -26,9 +28,9 @@ data class RevenueRequestDTO(
 ) {
     fun toModel(): Revenue {
         return Revenue(
-            description = this.description!!,
+            description = this.description!!.split(" ").joinToString(" ") {it.capitalize()},
             valor = this.value!!,
-            date = this.date!!
+            data = this.date!!
         )
     }
 }

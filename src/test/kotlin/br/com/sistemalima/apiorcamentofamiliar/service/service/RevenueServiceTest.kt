@@ -34,7 +34,7 @@ class RevenueServiceTest {
             id = null,
             description = "descrição receita test",
             valor = 1000.0,
-            date = LocalDate.of(2022, 12, 5)
+            data = LocalDate.of(2022, 12, 5)
         )
 
         every { revenueRepository.findByDescription(revenueEntity.description) } returns listOf()
@@ -55,13 +55,13 @@ class RevenueServiceTest {
             id = null,
             description = "descrição receita test",
             valor = 1000.0,
-            date = LocalDate.of(2022, 8, 5)
+            data = LocalDate.of(2022, 8, 5)
         )
         val revenue = Revenue(
             id = 1L,
             description = "descrição receita test",
             valor = 1000.0,
-            date = LocalDate.of(2022, 8, 31)
+            data = LocalDate.of(2022, 8, 31)
         )
 
         every { revenueRepository.findByDescription(revenueEntity.description) } returns listOf(revenue)
@@ -82,18 +82,18 @@ class RevenueServiceTest {
             id = null,
             description = "descrição receita test",
             valor = 1000.0,
-            date = LocalDate.of(2022, 8, 5)
+            data = LocalDate.of(2022, 8, 5)
         )
         val revenueDb = Revenue(
             id = 1L,
             description = "descrição receita test",
             valor = 1000.0,
-            date = LocalDate.of(2022, 9, 5)
+            data = LocalDate.of(2022, 9, 5)
         )
 
         every { revenueRepository.findByDescription(revenueEntity.description) } returns listOf(revenueDb)
 
-        val status = revenueService.revenueRuleValidation(revenueEntity.description, revenueEntity.date)
+        val status = revenueService.revenueRuleValidation(revenueEntity.description, revenueEntity.data)
 
         Assertions.assertEquals(true, status)
 
@@ -107,18 +107,18 @@ class RevenueServiceTest {
             id = null,
             description = "descrição receita test",
             valor = 1000.0,
-            date = LocalDate.of(2022, 8, 5)
+            data = LocalDate.of(2022, 8, 5)
         )
         val revenueDb = Revenue(
             id = 1L,
             description = "descrição receita test",
             valor = 1000.0,
-            date = LocalDate.of(2021, 8, 5)
+            data = LocalDate.of(2021, 8, 5)
         )
 
         every { revenueRepository.findByDescription(revenueEntity.description) } returns listOf(revenueDb)
 
-        val status = revenueService.revenueRuleValidation(revenueEntity.description, revenueEntity.date)
+        val status = revenueService.revenueRuleValidation(revenueEntity.description, revenueEntity.data)
 
         Assertions.assertEquals(true, status)
 
@@ -132,18 +132,18 @@ class RevenueServiceTest {
             id = null,
             description = "descrição receita test",
             valor = 1000.0,
-            date = LocalDate.of(2022, 8, 5)
+            data = LocalDate.of(2022, 8, 5)
         )
         val revenueDb = Revenue(
             id = 1L,
             description = "descrição receita test",
             valor = 1000.0,
-            date = LocalDate.of(2022, 8, 31)
+            data = LocalDate.of(2022, 8, 31)
         )
 
         every { revenueRepository.findByDescription(revenueEntity.description) } returns listOf(revenueDb)
 
-        val status = revenueService.revenueRuleValidation(revenueEntity.description, revenueEntity.date)
+        val status = revenueService.revenueRuleValidation(revenueEntity.description, revenueEntity.data)
 
         Assertions.assertEquals(false, status)
 
@@ -174,4 +174,5 @@ class RevenueServiceTest {
         verify(exactly = 1) {revenueRepository.findAll()}
         Assertions.assertEquals(0, dto.data.size)
     }
+
 }

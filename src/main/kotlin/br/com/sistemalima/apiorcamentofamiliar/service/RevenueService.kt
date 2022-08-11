@@ -29,7 +29,7 @@ class RevenueService(
 
         logger.info("$TAG, method: create, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
 
-        val status = revenueRuleValidation(revenueEntity.description, revenueEntity.date)
+        val status = revenueRuleValidation(revenueEntity.description, revenueEntity.data)
 
         if (!status) {
             throw BadRequestException(ProcessingResult.BAD_REQUEST_MESSAGE)
@@ -57,7 +57,7 @@ class RevenueService(
         }
 
         obj.forEach {
-            if (it.date.month == date.month && it.date.year == date.year ) {
+            if (it.data.month == date.month && it.data.year == date.year ) {
                 return false
             }
         }

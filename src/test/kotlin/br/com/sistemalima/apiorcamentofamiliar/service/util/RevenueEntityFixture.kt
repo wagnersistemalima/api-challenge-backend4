@@ -11,7 +11,7 @@ object RevenueEntityFixture {
             id = null,
             description = "descrição receita test",
             valor = 20.0,
-            date = LocalDate.now()
+            data = LocalDate.now()
         )
     }
 }
