@@ -4,6 +4,7 @@ import br.com.sistemalima.apiorcamentofamiliar.model.Revenue
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDate
+import java.util.*
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Positive
@@ -28,7 +29,7 @@ data class RevenueRequestDTO(
 ) {
     fun toModel(): Revenue {
         return Revenue(
-            description = this.description!!.split(" ").joinToString(" ") {it.capitalize()},
+            description = this.description!!.lowercase(Locale.getDefault()),
             valor = this.value!!,
             data = this.date!!
         )

@@ -1,5 +1,6 @@
 package br.com.sistemalima.apiorcamentofamiliar.controller
 
+import br.com.sistemalima.apiorcamentofamiliar.constant.ApiRoutes
 import br.com.sistemalima.apiorcamentofamiliar.constant.ProcessingResult
 import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueRequestDTO
 import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueResponseDTO
@@ -20,7 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder
 import javax.validation.Valid
 
 @RestController
-@RequestMapping(path = ["/receitas"], produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping(path = [ApiRoutes.REVENUE_ROUTER], produces = [MediaType.APPLICATION_JSON_VALUE])
 class RevenueController(
     @Autowired
     private val revenueService: RevenueService
@@ -58,7 +59,7 @@ class RevenueController(
         return ResponseEntity.ok().body(response)
     }
 
-    @GetMapping(path = ["/{id}"])
+    @GetMapping(path = [ApiRoutes.PATH_ID])
     fun findById(@PathVariable id: Long): ResponseEntity<Response<RevenueResponseDTO>> {
 
         logger.info("$TAG, method: findById id: $id, ${ProcessingResult.START_PROCCESS}")

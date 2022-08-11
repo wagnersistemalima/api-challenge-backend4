@@ -1,5 +1,6 @@
 package br.com.sistemalima.apiorcamentofamiliar.service.controller
 
+import br.com.sistemalima.apiorcamentofamiliar.constant.ApiRoutes
 import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueRequestDTO
 import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueResponseDTO
 import br.com.sistemalima.apiorcamentofamiliar.exceptions.EntityNotFoundException
@@ -40,8 +41,6 @@ class RevenueControlerTest {
     @MockBean
     private lateinit var revenueService: RevenueService
 
-    private val uriPost = "/receitas"
-    private val uriGet = "/receitas"
 
 
     @Test
@@ -53,7 +52,7 @@ class RevenueControlerTest {
 
         Mockito.`when`(revenueService.create(revenueEntity)).thenReturn(response)
 
-        mockMvc.perform(MockMvcRequestBuilders.post(uriPost)
+        mockMvc.perform(MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
             .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request)))
             .andExpect(MockMvcResultMatchers.status().isCreated)
             .andExpect(MockMvcResultMatchers.content().json(toJsonResponse(response)))
@@ -71,7 +70,7 @@ class RevenueControlerTest {
             )
         )
 
-        mockMvc.perform(MockMvcRequestBuilders.post(uriPost)
+        mockMvc.perform(MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
             .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request)))
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
@@ -87,7 +86,7 @@ class RevenueControlerTest {
             )
         )
 
-        mockMvc.perform(MockMvcRequestBuilders.post(uriPost)
+        mockMvc.perform(MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
             .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request)))
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
@@ -103,7 +102,7 @@ class RevenueControlerTest {
             )
         )
 
-        mockMvc.perform(MockMvcRequestBuilders.post(uriPost)
+        mockMvc.perform(MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
             .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request)))
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
@@ -119,7 +118,7 @@ class RevenueControlerTest {
             )
         )
 
-        mockMvc.perform(MockMvcRequestBuilders.post(uriPost)
+        mockMvc.perform(MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
             .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request)))
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
@@ -135,7 +134,7 @@ class RevenueControlerTest {
             )
         )
 
-        mockMvc.perform(MockMvcRequestBuilders.post(uriPost)
+        mockMvc.perform(MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
             .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request)))
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
@@ -149,7 +148,7 @@ class RevenueControlerTest {
 
         Mockito.`when`(revenueService.findAll()).thenReturn(response)
 
-        mockMvc.perform(MockMvcRequestBuilders.get(uriGet)
+        mockMvc.perform(MockMvcRequestBuilders.get(ApiRoutes.REVENUE_ROUTER)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.content().json(toJsonListResponse(response)))
@@ -165,7 +164,7 @@ class RevenueControlerTest {
 
         Mockito.`when`(revenueService.findAll()).thenReturn(response)
 
-        mockMvc.perform(MockMvcRequestBuilders.get(uriGet)
+        mockMvc.perform(MockMvcRequestBuilders.get(ApiRoutes.REVENUE_ROUTER)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.content().json(toJsonListResponse(response)))
@@ -175,7 +174,7 @@ class RevenueControlerTest {
     fun `findById GET should return 200 when passing an existing id`() {
 
         val response = RevenueResponseDTOFixture.build()
-        val uri = UriComponentsBuilder.fromUriString("/receitas/{id}").buildAndExpand(response.data.id).toUri()
+        val uri = UriComponentsBuilder.fromUriString(ApiRoutes.REVENUE_ROUTER + ApiRoutes.PATH_ID).buildAndExpand(response.data.id).toUri()
 
 
         Mockito.`when`(revenueService.findById(response.data.id!!)).thenReturn(response)
@@ -190,7 +189,7 @@ class RevenueControlerTest {
     fun `findById GET should return 404 when passing an id that does not exist`() {
 
         val idNotexist = 5000L
-        val uri = UriComponentsBuilder.fromUriString("/receitas/{id}").buildAndExpand(idNotexist).toUri()
+        val uri = UriComponentsBuilder.fromUriString(ApiRoutes.REVENUE_ROUTER + ApiRoutes.PATH_ID).buildAndExpand(idNotexist).toUri()
 
         Mockito.`when`(revenueService.findById(idNotexist)).thenThrow(EntityNotFoundException("Entity not found"))
 

@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.LocalDate
+import java.util.*
 
 @ExtendWith(MockKExtension::class)
 class RevenueServiceTest {
@@ -173,6 +174,14 @@ class RevenueServiceTest {
 
         verify(exactly = 1) {revenueRepository.findAll()}
         Assertions.assertEquals(0, dto.data.size)
+    }
+
+    @Test
+    fun test() {
+        val name = "PauLo riCardo"
+        val nameFormater = name.lowercase(Locale.getDefault())
+
+        println(nameFormater)
     }
 
 }
