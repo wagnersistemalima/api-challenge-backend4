@@ -20,5 +20,5 @@ data class RevenueResponseDTO(
     @field:JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING)
     val date: LocalDate
 ) {
-    constructor(revenue: Revenue): this (revenue.id, revenue.description, revenue.valor, revenue.data)
+    constructor(revenue: Revenue) : this(revenue.id, revenue.description, revenue.valor, revenue.data)
 }

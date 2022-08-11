@@ -6,7 +6,6 @@ import java.time.LocalDate
 
 object RevenueRequestDTOFixture
 {
-
     fun build(): Request<RevenueRequestDTO> {
         return Request(
             data = RevenueRequestDTO(

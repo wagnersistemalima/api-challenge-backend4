@@ -332,7 +332,6 @@ class RevenueControlerTest {
         val idNotExist = 5000L
         val revenueEntity = request.data.toModel()
 
-
         val uri =
             UriComponentsBuilder.fromUriString(ApiRoutes.REVENUE_ROUTER + ApiRoutes.PATH_ID).buildAndExpand(idNotExist)
                 .toUri()

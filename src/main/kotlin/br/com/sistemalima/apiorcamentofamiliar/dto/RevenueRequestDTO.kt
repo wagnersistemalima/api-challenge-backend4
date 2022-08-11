@@ -26,6 +26,7 @@ data class RevenueRequestDTO(
     @field:JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING)
     @JsonProperty("data")
     val date: LocalDate?
+
 ) {
     fun toModel(): Revenue {
         return Revenue(

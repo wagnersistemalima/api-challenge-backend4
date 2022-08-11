@@ -47,8 +47,8 @@ class RevenueServiceImplTest {
 
         Assertions.assertDoesNotThrow { revenueServiceImpl.create(revenueEntity) }
 
-        verify(exactly = 1) {revenueRepository.findByDescription(revenueEntity.description)}
-        verify(exactly = 1) {revenueRepository.save(revenueEntity)}
+        verify(exactly = 1) { revenueRepository.findByDescription(revenueEntity.description) }
+        verify(exactly = 1) { revenueRepository.save(revenueEntity) }
 
     }
 
@@ -71,12 +71,12 @@ class RevenueServiceImplTest {
         every { revenueRepository.findByDescription(revenueEntity.description) } returns listOf(revenue)
 
 
-        val error = assertThrows<BadRequestException> { revenueServiceImpl.create(revenueEntity)  }
+        val error = assertThrows<BadRequestException> { revenueServiceImpl.create(revenueEntity) }
 
         assertThat(error.message).isEqualTo(ProcessingResult.BAD_REQUEST_MESSAGE_VALIDATION_REVENUE)
 
-        verify(exactly = 1) {revenueRepository.findByDescription(revenueEntity.description)}
-        verify(exactly = 0) {revenueRepository.save(revenueEntity)}
+        verify(exactly = 1) { revenueRepository.findByDescription(revenueEntity.description) }
+        verify(exactly = 0) { revenueRepository.save(revenueEntity) }
 
     }
 
@@ -102,7 +102,7 @@ class RevenueServiceImplTest {
 
         Assertions.assertEquals(true, status)
 
-        verify(exactly = 1) {revenueRepository.findByDescription(revenueEntity.description)}
+        verify(exactly = 1) { revenueRepository.findByDescription(revenueEntity.description) }
     }
 
     @Test
@@ -127,7 +127,7 @@ class RevenueServiceImplTest {
 
         Assertions.assertEquals(true, status)
 
-        verify(exactly = 1) {revenueRepository.findByDescription(revenueEntity.description)}
+        verify(exactly = 1) { revenueRepository.findByDescription(revenueEntity.description) }
     }
 
     @Test
@@ -152,7 +152,7 @@ class RevenueServiceImplTest {
 
         Assertions.assertEquals(false, status)
 
-        verify(exactly = 1) {revenueRepository.findByDescription(revenueEntity.description)}
+        verify(exactly = 1) { revenueRepository.findByDescription(revenueEntity.description) }
     }
 
     @Test
@@ -163,7 +163,7 @@ class RevenueServiceImplTest {
 
         val dto = revenueServiceImpl.findAll()
 
-        verify(exactly = 1) {revenueRepository.findAll()}
+        verify(exactly = 1) { revenueRepository.findAll() }
         Assertions.assertEquals(2, dto.data.size)
     }
 
@@ -175,7 +175,7 @@ class RevenueServiceImplTest {
 
         val dto = revenueServiceImpl.findAll()
 
-        verify(exactly = 1) {revenueRepository.findAll()}
+        verify(exactly = 1) { revenueRepository.findAll() }
         Assertions.assertEquals(0, dto.data.size)
     }
 
@@ -189,8 +189,8 @@ class RevenueServiceImplTest {
 
         Assertions.assertDoesNotThrow { revenueServiceImpl.delete(idExist!!) }
 
-        verify(exactly = 1) {revenueRepository.findById(idExist!!)}
-        verify(exactly = 1) {revenueRepository.delete(revenueDb)}
+        verify(exactly = 1) { revenueRepository.findById(idExist!!) }
+        verify(exactly = 1) { revenueRepository.delete(revenueDb) }
     }
 
     @Test
@@ -199,10 +199,10 @@ class RevenueServiceImplTest {
 
         every { revenueRepository.findById(idNotExist) } returns Optional.empty()
 
-        Assertions.assertThrows(EntityNotFoundException::class.java) {revenueServiceImpl.delete(idNotExist)}
+        Assertions.assertThrows(EntityNotFoundException::class.java) { revenueServiceImpl.delete(idNotExist) }
 
-        verify(exactly = 1) {revenueRepository.findById(idNotExist)}
-        verify(exactly = 0) {revenueRepository.delete(any())}
+        verify(exactly = 1) { revenueRepository.findById(idNotExist) }
+        verify(exactly = 0) { revenueRepository.delete(any()) }
     }
 
     @Test
@@ -231,9 +231,9 @@ class RevenueServiceImplTest {
 
         Assertions.assertDoesNotThrow { revenueServiceImpl.update(revenueEntity, idExist) }
 
-        verify(exactly = 1) {revenueRepository.findById(idExist)}
-        verify(exactly = 1) {revenueRepository.findByDescription(revenueEntity.description)}
-        verify(exactly = 1) {revenueRepository.save(updateRevenue)}
+        verify(exactly = 1) { revenueRepository.findById(idExist) }
+        verify(exactly = 1) { revenueRepository.findByDescription(revenueEntity.description) }
+        verify(exactly = 1) { revenueRepository.save(updateRevenue) }
 
         Assertions.assertEquals("salario janeiro", revenueDb.description)
 
@@ -260,10 +260,10 @@ class RevenueServiceImplTest {
         every { revenueRepository.findByDescription(revenueEntity.description) } returns listOf(revenueDb)
 
 
-        Assertions.assertThrows(BadRequestException::class.java) {revenueServiceImpl.update(revenueEntity, idExist)}
+        Assertions.assertThrows(BadRequestException::class.java) { revenueServiceImpl.update(revenueEntity, idExist) }
 
-        verify(exactly = 1) {revenueRepository.findById(idExist)}
-        verify(exactly = 1) {revenueRepository.findByDescription(revenueEntity.description)}
+        verify(exactly = 1) { revenueRepository.findById(idExist) }
+        verify(exactly = 1) { revenueRepository.findByDescription(revenueEntity.description) }
 
     }
 
@@ -279,9 +279,14 @@ class RevenueServiceImplTest {
 
         every { revenueRepository.findById(idNotExist) } returns Optional.empty()
 
-        Assertions.assertThrows(EntityNotFoundException::class.java) {revenueServiceImpl.update(revenueEntity, idNotExist)}
+        Assertions.assertThrows(EntityNotFoundException::class.java) {
+            revenueServiceImpl.update(
+                revenueEntity,
+                idNotExist
+            )
+        }
 
-        verify(exactly = 1) {revenueRepository.findById(idNotExist)}
+        verify(exactly = 1) { revenueRepository.findById(idNotExist) }
 
     }
 

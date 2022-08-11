@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface RevenueRepository: JpaRepository<Revenue, Long> {
-
     fun findByDescription(description: String): List<Revenue>
 }

@@ -4,6 +4,7 @@ spring:
     url: jdbc:mysql://localhost:3306/orcamento_dev
     username: root
     password: root
+
   jpa:
     properties:
       hibernate:
