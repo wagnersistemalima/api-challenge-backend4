@@ -6,7 +6,7 @@ import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueRequestDTO
 import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueResponseDTO
 import br.com.sistemalima.apiorcamentofamiliar.request.Request
 import br.com.sistemalima.apiorcamentofamiliar.response.Response
-import br.com.sistemalima.apiorcamentofamiliar.service.impl.RevenueService
+import br.com.sistemalima.apiorcamentofamiliar.service.RevenueService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -61,7 +61,7 @@ class RevenueController(
 
         val response = revenueService.findById(id)
 
-        logger.info("$TAG, method: findById [GET] id: $id SUCCESS, ${ProcessingResult.START_PROCCESS}")
+        logger.info("$TAG, method: findById [GET] id: $id SUCCESS, ${ProcessingResult.END_PROCESS}")
         return ResponseEntity.ok().body(response)
     }
 
@@ -72,8 +72,22 @@ class RevenueController(
 
         revenueService.delete(id)
 
-        logger.info("$TAG, method: delete [DELETE] id: $id SUCCESS, ${ProcessingResult.START_PROCCESS}")
+        logger.info("$TAG, method: delete [DELETE] id: $id SUCCESS, ${ProcessingResult.END_PROCESS}")
 
         return ResponseEntity.noContent().build()
     }
+
+    @PutMapping(path = [ApiRoutes.PATH_ID])
+    fun update(@PathVariable id: Long, @RequestBody request: Request<RevenueRequestDTO>): ResponseEntity<Response<RevenueResponseDTO>> {
+        logger.info("$TAG, method: update [PUT] id: $id, ${ProcessingResult.START_PROCCESS}")
+
+        val revenueEntity = request.data.toModel()
+
+        val response = revenueService.update(revenueEntity, id)
+
+        logger.info("$TAG, method: update [PUT] id: $id SUCCESS, ${ProcessingResult.END_PROCESS}")
+
+        return ResponseEntity.ok().body(response)
+    }
+
 }

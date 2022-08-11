@@ -10,7 +10,7 @@ object RevenueRequestDTOFixture
     fun build(): Request<RevenueRequestDTO> {
         return Request(
             data = RevenueRequestDTO(
-                description = "Salaraio",
+                description = "Salario",
                 value = 1000.0,
                 date = LocalDate.now()
             )

@@ -17,13 +17,13 @@ data class Revenue(
     @field:NotBlank
     @field:NotNull
     @field:Size(max = 100)
-    val description: String,
+    var description: String,
 
     @field:NotNull
-    val valor: Double,
+    var valor: Double,
 
     @field:NotNull
-    val data: LocalDate
+    var data: LocalDate
 
 
 )

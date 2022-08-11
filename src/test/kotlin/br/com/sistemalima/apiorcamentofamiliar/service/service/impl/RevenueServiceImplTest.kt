@@ -32,7 +32,7 @@ class RevenueServiceImplTest {
     private lateinit var revenueRepository: RevenueRepository
 
     @Test
-    fun `create POST must save a recipe`() {
+    fun `create POST deve salvar uma receita`() {
 
         val revenueEntity = Revenue(
             id = null,
@@ -53,7 +53,7 @@ class RevenueServiceImplTest {
     }
 
     @Test
-    fun `create POST should not allow registering a duplicate recipe containing the same description within the month, throwing BadRequestException`() {
+    fun `create POST nao deve permitir o registro de uma receita duplicada contendo a mesma descricao dentro do mes, lancar BadRequestException`() {
 
         val revenueEntity = Revenue(
             id = null,
@@ -73,7 +73,7 @@ class RevenueServiceImplTest {
 
         val error = assertThrows<BadRequestException> { revenueServiceImpl.create(revenueEntity)  }
 
-        assertThat(error.message).isEqualTo(ProcessingResult.BAD_REQUEST_MESSAGE)
+        assertThat(error.message).isEqualTo(ProcessingResult.BAD_REQUEST_MESSAGE_VALIDATION_REVENUE)
 
         verify(exactly = 1) {revenueRepository.findByDescription(revenueEntity.description)}
         verify(exactly = 0) {revenueRepository.save(revenueEntity)}
@@ -81,7 +81,7 @@ class RevenueServiceImplTest {
     }
 
     @Test
-    fun `revenueRuleValidation must return true when receiving a recipe containing a description and year equal to the registered recipe but the month is different`() {
+    fun `revenueRuleValidation deve retornar true ao receber uma receita contendo descricao e ano igual a receita cadastrada, mas o mes diferente`() {
 
         val revenueEntity = Revenue(
             id = null,
@@ -98,7 +98,7 @@ class RevenueServiceImplTest {
 
         every { revenueRepository.findByDescription(revenueEntity.description) } returns listOf(revenueDb)
 
-        val status = revenueServiceImpl.revenueRuleValidation(revenueEntity.description, revenueEntity.data)
+        val status = revenueServiceImpl.revenueRuleValidation(revenueEntity)
 
         Assertions.assertEquals(true, status)
 
@@ -106,7 +106,7 @@ class RevenueServiceImplTest {
     }
 
     @Test
-    fun `revenueRuleValidation must return true when receiving a recipe containing a description and date of the month equal to the registered recipe but different year`() {
+    fun `revenueRuleValidation deve retornar true ao receber uma receita contendo descricao e data do mes igual a receita cadastrada, mas ano diferente`() {
 
         val revenueEntity = Revenue(
             id = null,
@@ -123,7 +123,7 @@ class RevenueServiceImplTest {
 
         every { revenueRepository.findByDescription(revenueEntity.description) } returns listOf(revenueDb)
 
-        val status = revenueServiceImpl.revenueRuleValidation(revenueEntity.description, revenueEntity.data)
+        val status = revenueServiceImpl.revenueRuleValidation(revenueEntity)
 
         Assertions.assertEquals(true, status)
 
@@ -131,7 +131,7 @@ class RevenueServiceImplTest {
     }
 
     @Test
-    fun `revenueRuleValidation should return false when receiving a recipe containing description and year and month equal to the recipe but different day`() {
+    fun `revenueRuleValidation deve retornar false ao receber uma receita contendo descricao e ano e mes iguais a receita cadastrada`() {
 
         val revenueEntity = Revenue(
             id = null,
@@ -148,7 +148,7 @@ class RevenueServiceImplTest {
 
         every { revenueRepository.findByDescription(revenueEntity.description) } returns listOf(revenueDb)
 
-        val status = revenueServiceImpl.revenueRuleValidation(revenueEntity.description, revenueEntity.data)
+        val status = revenueServiceImpl.revenueRuleValidation(revenueEntity)
 
         Assertions.assertEquals(false, status)
 
@@ -156,7 +156,7 @@ class RevenueServiceImplTest {
     }
 
     @Test
-    fun `findAll should return a list of dto containing the recipes`() {
+    fun `findAll deve retornar uma lista de dto contendo as receitas`() {
         val list = ListRevenueFixture.build()
 
         every { revenueRepository.findAll() } returns list
@@ -168,7 +168,7 @@ class RevenueServiceImplTest {
     }
 
     @Test
-    fun `findAll should return an empty dto list when there are no registered recipes`() {
+    fun `findAll devera devolver uma lista dto vazia quando nao existirem receitas registadas`() {
         val list = listOf<Revenue>()
 
         every { revenueRepository.findAll() } returns list
@@ -180,7 +180,7 @@ class RevenueServiceImplTest {
     }
 
     @Test
-    fun `deve deletar um id de receita cadastrada`() {
+    fun `delete deve deletar um ID de receita registrado`() {
         val revenueDb = RevenueFixture.build()
         val idExist = revenueDb.id
 
@@ -194,7 +194,7 @@ class RevenueServiceImplTest {
     }
 
     @Test
-    fun `deve lancar exception EntityNotFound quando tentar deletar um id receita inexistente`() {
+    fun `delete deve lancar a excecao EntityNotFound ao tentar excluir um ID de receita inexistente`() {
         val idNotExist = 5000L
 
         every { revenueRepository.findById(idNotExist) } returns Optional.empty()
@@ -203,6 +203,86 @@ class RevenueServiceImplTest {
 
         verify(exactly = 1) {revenueRepository.findById(idNotExist)}
         verify(exactly = 0) {revenueRepository.delete(any())}
+    }
+
+    @Test
+    fun `update deve atualizar uma receita quando receber um id da receita existente`() {
+        val idExist = 1L
+        val revenueEntity = Revenue(
+            id = null,
+            description = "salario janeiro",
+            valor = 1000.0,
+            data = LocalDate.of(2022, 8, 11)
+        )
+
+        val revenueDb = Revenue(
+            id = 10L,
+            description = "venda do carro",
+            valor = 5000.0,
+            data = LocalDate.of(2022, 5, 9)
+        )
+
+        every { revenueRepository.findById(idExist) } returns Optional.of(revenueDb)
+        every { revenueRepository.findByDescription(revenueEntity.description) } returns listOf()
+
+        val updateRevenue = revenueServiceImpl.updateRevenueObject(revenueDb, revenueEntity)
+
+        every { revenueRepository.save(updateRevenue) } returns updateRevenue
+
+        Assertions.assertDoesNotThrow { revenueServiceImpl.update(revenueEntity, idExist) }
+
+        verify(exactly = 1) {revenueRepository.findById(idExist)}
+        verify(exactly = 1) {revenueRepository.findByDescription(revenueEntity.description)}
+        verify(exactly = 1) {revenueRepository.save(updateRevenue)}
+
+        Assertions.assertEquals("salario janeiro", revenueDb.description)
+
+    }
+
+    @Test
+    fun `update nao deve permitir a atualizacao do registro de uma receita duplicada contendo a mesma descricao dentro do mes, lancar BadRequestException`() {
+        val idExist = 1L
+        val revenueEntity = Revenue(
+            id = null,
+            description = "salario janeiro",
+            valor = 1000.0,
+            data = LocalDate.of(2022, 8, 11)
+        )
+
+        val revenueDb = Revenue(
+            id = 10L,
+            description = "salario janeiro",
+            valor = 5000.0,
+            data = LocalDate.of(2022, 8, 9)
+        )
+
+        every { revenueRepository.findById(idExist) } returns Optional.of(revenueDb)
+        every { revenueRepository.findByDescription(revenueEntity.description) } returns listOf(revenueDb)
+
+
+        Assertions.assertThrows(BadRequestException::class.java) {revenueServiceImpl.update(revenueEntity, idExist)}
+
+        verify(exactly = 1) {revenueRepository.findById(idExist)}
+        verify(exactly = 1) {revenueRepository.findByDescription(revenueEntity.description)}
+
+    }
+
+    @Test
+    fun `update deve lancar EntityNotfoundException quando nao encontar o id da receita cadastrada`() {
+        val idNotExist = 5000L
+        val revenueEntity = Revenue(
+            id = null,
+            description = "salario janeiro",
+            valor = 1000.0,
+            data = LocalDate.of(2022, 8, 11)
+        )
+
+        every { revenueRepository.findById(idNotExist) } returns Optional.empty()
+
+        Assertions.assertThrows(EntityNotFoundException::class.java) {revenueServiceImpl.update(revenueEntity, idNotExist)}
+
+        verify(exactly = 1) {revenueRepository.findById(idNotExist)}
+
     }
 
 }

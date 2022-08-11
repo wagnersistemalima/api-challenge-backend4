@@ -1,4 +1,4 @@
-package br.com.sistemalima.apiorcamentofamiliar.service.impl
+package br.com.sistemalima.apiorcamentofamiliar.service
 
 import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueResponseDTO
 import br.com.sistemalima.apiorcamentofamiliar.model.Revenue
@@ -13,4 +13,7 @@ interface RevenueService {
     fun findById(id: Long): Response<RevenueResponseDTO>
 
     fun delete(id: Long)
+
+    fun update(revenueEntity: Revenue, id: Long): Response<RevenueResponseDTO>
+
 }

@@ -1,13 +1,15 @@
 package br.com.sistemalima.apiorcamentofamiliar.service.controller
 
 import br.com.sistemalima.apiorcamentofamiliar.constant.ApiRoutes
+import br.com.sistemalima.apiorcamentofamiliar.constant.ProcessingResult
 import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueRequestDTO
 import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueResponseDTO
+import br.com.sistemalima.apiorcamentofamiliar.exceptions.BadRequestException
 import br.com.sistemalima.apiorcamentofamiliar.exceptions.EntityNotFoundException
 import br.com.sistemalima.apiorcamentofamiliar.model.Revenue
 import br.com.sistemalima.apiorcamentofamiliar.request.Request
 import br.com.sistemalima.apiorcamentofamiliar.response.Response
-import br.com.sistemalima.apiorcamentofamiliar.service.impl.RevenueService
+import br.com.sistemalima.apiorcamentofamiliar.service.RevenueService
 import br.com.sistemalima.apiorcamentofamiliar.service.util.ListRevenueFixture
 import br.com.sistemalima.apiorcamentofamiliar.service.util.RevenueFixture
 import br.com.sistemalima.apiorcamentofamiliar.service.util.RevenueRequestDTOFixture
@@ -43,9 +45,8 @@ class RevenueControlerTest {
     private lateinit var revenueService: RevenueService
 
 
-
     @Test
-    fun `create POST should return status 201`() {
+    fun `create POST deve retornar o status 201`() {
 
         val request = RevenueRequestDTOFixture.build()
         val revenueEntity = request.data.toModel()
@@ -53,15 +54,17 @@ class RevenueControlerTest {
 
         Mockito.`when`(revenueService.create(revenueEntity)).thenReturn(response)
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
-            .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request)))
+        mockMvc.perform(
+            MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request))
+        )
             .andExpect(MockMvcResultMatchers.status().isCreated)
             .andExpect(MockMvcResultMatchers.content().json(toJsonResponse(response)))
 
     }
 
     @Test
-    fun `create POST should return status 400, when description is not empty`() {
+    fun `create POST deve retornar o status 400 quando a mesma descricao da receita,no mesmo mes ja existir`() {
 
         val request = Request(
             data = RevenueRequestDTO(
@@ -71,13 +74,37 @@ class RevenueControlerTest {
             )
         )
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
-            .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request)))
+        val revenueEntity = request.data.toModel()
+
+        Mockito.`when`(revenueService.create(revenueEntity)).thenThrow(BadRequestException(ProcessingResult.BAD_REQUEST_MESSAGE_VALIDATION_REVENUE))
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request))
+        )
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 
     @Test
-    fun `create POST should return status 400, when the description is null`() {
+    fun `create POST deve retornar o status 400 quando a descricao nao estiver vazia`() {
+
+        val request = Request(
+            data = RevenueRequestDTO(
+                description = " ",
+                value = 1000.0,
+                date = LocalDate.of(2022, 8, 10)
+            )
+        )
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request))
+        )
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+    }
+
+    @Test
+    fun `create POST deve retornar o status 400, quando a descricao for nula`() {
 
         val request = Request(
             data = RevenueRequestDTO(
@@ -87,13 +114,15 @@ class RevenueControlerTest {
             )
         )
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
-            .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request)))
+        mockMvc.perform(
+            MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request))
+        )
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 
     @Test
-    fun `create POST should return status 400, when the value is negative`() {
+    fun `create POST deve retornar o status 400, quando o valor for negativo`() {
 
         val request = Request(
             data = RevenueRequestDTO(
@@ -103,13 +132,15 @@ class RevenueControlerTest {
             )
         )
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
-            .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request)))
+        mockMvc.perform(
+            MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request))
+        )
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 
     @Test
-    fun `create POST should return status 400, when value is null`() {
+    fun `create POST deve retornar o status 400, quando o valor for nulo`() {
 
         val request = Request(
             data = RevenueRequestDTO(
@@ -119,13 +150,15 @@ class RevenueControlerTest {
             )
         )
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
-            .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request)))
+        mockMvc.perform(
+            MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request))
+        )
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 
     @Test
-    fun `create POST should return status 400, when date is null`() {
+    fun `create POST deve retornar o status 400, quando a data for nula`() {
 
         val request = Request(
             data = RevenueRequestDTO(
@@ -135,13 +168,15 @@ class RevenueControlerTest {
             )
         )
 
-        mockMvc.perform(MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
-            .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request)))
+        mockMvc.perform(
+            MockMvcRequestBuilders.post(ApiRoutes.REVENUE_ROUTER)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request))
+        )
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 
     @Test
-    fun `findAll GET should return 200 with a list of dto recipes`() {
+    fun `findAll GET deve retornar 200 com uma lista de receitas dto`() {
 
         val list = ListRevenueFixture.build()
         val dto = list.map { revenue -> RevenueResponseDTO(revenue) }
@@ -149,15 +184,17 @@ class RevenueControlerTest {
 
         Mockito.`when`(revenueService.findAll()).thenReturn(response)
 
-        mockMvc.perform(MockMvcRequestBuilders.get(ApiRoutes.REVENUE_ROUTER)
-            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        mockMvc.perform(
+            MockMvcRequestBuilders.get(ApiRoutes.REVENUE_ROUTER)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+        )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.content().json(toJsonListResponse(response)))
 
     }
 
     @Test
-    fun `findAll GET hould return 200 with an empty dto list when there are no registered recipes`() {
+    fun `findAll GET deve retornar 200 com uma lista dto vazia quando nao houver receitas registradas`() {
 
         val list = listOf<Revenue>()
         val dto = list.map { revenue -> RevenueResponseDTO(revenue) }
@@ -165,65 +202,148 @@ class RevenueControlerTest {
 
         Mockito.`when`(revenueService.findAll()).thenReturn(response)
 
-        mockMvc.perform(MockMvcRequestBuilders.get(ApiRoutes.REVENUE_ROUTER)
-            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        mockMvc.perform(
+            MockMvcRequestBuilders.get(ApiRoutes.REVENUE_ROUTER)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+        )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.content().json(toJsonListResponse(response)))
     }
 
     @Test
-    fun `findById GET should return 200 when passing an existing id`() {
+    fun `findById GET deve retornar 200 ao passar um id existente`() {
 
         val response = RevenueResponseDTOFixture.build()
-        val uri = UriComponentsBuilder.fromUriString(ApiRoutes.REVENUE_ROUTER + ApiRoutes.PATH_ID).buildAndExpand(response.data.id).toUri()
+        val uri = UriComponentsBuilder.fromUriString(ApiRoutes.REVENUE_ROUTER + ApiRoutes.PATH_ID)
+            .buildAndExpand(response.data.id).toUri()
 
 
         Mockito.`when`(revenueService.findById(response.data.id!!)).thenReturn(response)
 
-        mockMvc.perform(MockMvcRequestBuilders.get(uri)
-            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        mockMvc.perform(
+            MockMvcRequestBuilders.get(uri)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+        )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.content().json(toJsonResponse(response)))
     }
 
     @Test
-    fun `findById GET should return 404 when passing an id that does not exist`() {
+    fun `findById GET deve retornar 404 ao passar um id que nao existe`() {
 
         val idNotexist = 5000L
-        val uri = UriComponentsBuilder.fromUriString(ApiRoutes.REVENUE_ROUTER + ApiRoutes.PATH_ID).buildAndExpand(idNotexist).toUri()
+        val uri =
+            UriComponentsBuilder.fromUriString(ApiRoutes.REVENUE_ROUTER + ApiRoutes.PATH_ID).buildAndExpand(idNotexist)
+                .toUri()
 
-        Mockito.`when`(revenueService.findById(idNotexist)).thenThrow(EntityNotFoundException("Entity not found"))
+        Mockito.`when`(revenueService.findById(idNotexist)).thenThrow(EntityNotFoundException(ProcessingResult.ENTITY_NOT_FOUND_MESSAGE))
 
-        mockMvc.perform(MockMvcRequestBuilders.get(uri)
-            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        mockMvc.perform(
+            MockMvcRequestBuilders.get(uri)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+        )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
     }
 
     @Test
-    fun `delete DELETE should return 204 when receiving a recipe id already registered`() {
+    fun `delete DELETE deve retornar 204 ao receber um ID de receita ja cadastrado`() {
 
         val revenueDb = RevenueFixture.build()
         val idExist = revenueDb.id
-        val uri = UriComponentsBuilder.fromUriString(ApiRoutes.REVENUE_ROUTER + ApiRoutes.PATH_ID).buildAndExpand(idExist).toUri()
+        val uri =
+            UriComponentsBuilder.fromUriString(ApiRoutes.REVENUE_ROUTER + ApiRoutes.PATH_ID).buildAndExpand(idExist)
+                .toUri()
 
         Mockito.doNothing().`when`(revenueService).delete(idExist!!)
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(uri)
-            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete(uri)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+        )
             .andExpect(MockMvcResultMatchers.status().isNoContent)
 
     }
 
     @Test
-    fun `delete DELETE should return 404 when receiving an unregistered revenue id`() {
+    fun `delete DELETE deve retornar 404 ao receber um ID de receita nao registrado`() {
 
         val idNotExist = 5000L
-        val uri = UriComponentsBuilder.fromUriString(ApiRoutes.REVENUE_ROUTER + ApiRoutes.PATH_ID).buildAndExpand(idNotExist).toUri()
+        val uri =
+            UriComponentsBuilder.fromUriString(ApiRoutes.REVENUE_ROUTER + ApiRoutes.PATH_ID).buildAndExpand(idNotExist)
+                .toUri()
 
-        Mockito.`when`(revenueService.delete(idNotExist)).thenThrow(EntityNotFoundException("Entity not found"))
+        Mockito.`when`(revenueService.delete(idNotExist)).thenThrow(EntityNotFoundException(ProcessingResult.ENTITY_NOT_FOUND_MESSAGE))
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(uri)
-            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete(uri)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+        )
+            .andExpect(MockMvcResultMatchers.status().isNotFound)
+
+    }
+
+    @Test
+    fun `update PUT deve retornar 200 quando receber um id de receita cadastrada para atualizar`() {
+        val request = RevenueRequestDTOFixture.build()
+        val idExist = 1L
+        val revenueEntity = request.data.toModel()
+
+        val response = RevenueResponseDTOFixture.build()
+
+        val uri =
+            UriComponentsBuilder.fromUriString(ApiRoutes.REVENUE_ROUTER + ApiRoutes.PATH_ID).buildAndExpand(idExist)
+                .toUri()
+
+        Mockito.`when`(revenueService.update(revenueEntity, idExist)).thenReturn(response)
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put(uri)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request))
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json(toJsonResponse(response)))
+    }
+
+    @Test
+    fun `update PUT deve retornar 404 quando receber um id de receita que nao existe para atualizar`() {
+        val request = RevenueRequestDTOFixture.build()
+        val idNotExist = 5000L
+        val revenueEntity = request.data.toModel()
+
+
+        val uri =
+            UriComponentsBuilder.fromUriString(ApiRoutes.REVENUE_ROUTER + ApiRoutes.PATH_ID).buildAndExpand(idNotExist)
+                .toUri()
+
+        Mockito.`when`(revenueService.update(revenueEntity, idNotExist))
+            .thenThrow(EntityNotFoundException(ProcessingResult.ENTITY_NOT_FOUND_MESSAGE))
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put(uri)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request))
+        )
+            .andExpect(MockMvcResultMatchers.status().isNotFound)
+
+    }
+
+    @Test
+    fun `update PUT deve retornar o status 400, quando a mesma descricao receita, dentro do mesmo mes ja existe para ser atualizada`() {
+        val request = RevenueRequestDTOFixture.build()
+        val idNotExist = 5000L
+        val revenueEntity = request.data.toModel()
+
+
+        val uri =
+            UriComponentsBuilder.fromUriString(ApiRoutes.REVENUE_ROUTER + ApiRoutes.PATH_ID).buildAndExpand(idNotExist)
+                .toUri()
+
+        Mockito.`when`(revenueService.update(revenueEntity, idNotExist))
+            .thenThrow(EntityNotFoundException(ProcessingResult.BAD_REQUEST_MESSAGE_VALIDATION_REVENUE))
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.put(uri)
+                .contentType(MediaType.APPLICATION_JSON_VALUE).content(toJson(request))
+        )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
 
     }
