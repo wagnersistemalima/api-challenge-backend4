@@ -6,17 +6,12 @@ import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueRequestDTO
 import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueResponseDTO
 import br.com.sistemalima.apiorcamentofamiliar.request.Request
 import br.com.sistemalima.apiorcamentofamiliar.response.Response
-import br.com.sistemalima.apiorcamentofamiliar.service.RevenueService
+import br.com.sistemalima.apiorcamentofamiliar.service.impl.RevenueService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.util.UriComponentsBuilder
 import javax.validation.Valid
 
@@ -43,7 +38,7 @@ class RevenueController(
 
         val uri = uriBuilder.path("/receitas/${response.data.id}").build().toUri()
 
-        logger.info("$TAG, method: create SUCCESS [POST], ${ProcessingResult.END_PROCESS}")
+        logger.info("$TAG, method: create [POST] SUCCESS [POST], ${ProcessingResult.END_PROCESS}")
 
         return ResponseEntity.created(uri).body(response)
     }
@@ -51,22 +46,34 @@ class RevenueController(
     @GetMapping
     fun findAll(): ResponseEntity<Response<List<RevenueResponseDTO>>> {
 
-        logger.info("$TAG, method: findAll, ${ProcessingResult.START_PROCCESS}")
+        logger.info("$TAG, method: findAll [GET], ${ProcessingResult.START_PROCCESS}")
 
         val response = revenueService.findAll()
 
-        logger.info("$TAG, method: findAll SUCCESS, ${ProcessingResult.END_PROCESS}")
+        logger.info("$TAG, method: findAll [GET] SUCCESS, ${ProcessingResult.END_PROCESS}")
         return ResponseEntity.ok().body(response)
     }
 
     @GetMapping(path = [ApiRoutes.PATH_ID])
     fun findById(@PathVariable id: Long): ResponseEntity<Response<RevenueResponseDTO>> {
 
-        logger.info("$TAG, method: findById id: $id, ${ProcessingResult.START_PROCCESS}")
+        logger.info("$TAG, method: findById [GET] id: $id, ${ProcessingResult.START_PROCCESS}")
 
         val response = revenueService.findById(id)
 
-        logger.info("$TAG, method: findById id: $id SUCCESS, ${ProcessingResult.START_PROCCESS}")
+        logger.info("$TAG, method: findById [GET] id: $id SUCCESS, ${ProcessingResult.START_PROCCESS}")
         return ResponseEntity.ok().body(response)
+    }
+
+    @DeleteMapping(path = [ApiRoutes.PATH_ID])
+    fun delete(@PathVariable id: Long): ResponseEntity<Unit> {
+
+        logger.info("$TAG, method: delete [DELETE] id: $id, ${ProcessingResult.START_PROCCESS}")
+
+        revenueService.delete(id)
+
+        logger.info("$TAG, method: delete [DELETE] id: $id SUCCESS, ${ProcessingResult.START_PROCCESS}")
+
+        return ResponseEntity.noContent().build()
     }
 }

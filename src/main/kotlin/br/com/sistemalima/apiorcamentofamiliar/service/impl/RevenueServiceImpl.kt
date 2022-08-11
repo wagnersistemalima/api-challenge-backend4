@@ -1,4 +1,4 @@
-package br.com.sistemalima.apiorcamentofamiliar.service
+package br.com.sistemalima.apiorcamentofamiliar.service.impl
 
 import br.com.sistemalima.apiorcamentofamiliar.constant.ProcessingResult
 import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueResponseDTO
@@ -14,18 +14,18 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
 @Service
-class RevenueService(
+class RevenueServiceImpl(
     @Autowired
     private val revenueRepository: RevenueRepository
-) {
+): RevenueService {
 
     companion object {
-        private val logger = LoggerFactory.getLogger(RevenueService::class.java)
+        private val logger = LoggerFactory.getLogger(RevenueServiceImpl::class.java)
         private const val TAG = "class: ReceitaService"
     }
 
     @Transactional
-    fun create(revenueEntity: Revenue): Response<RevenueResponseDTO> {
+    override fun create(revenueEntity: Revenue): Response<RevenueResponseDTO> {
 
         logger.info("$TAG, method: create, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
 
@@ -46,6 +46,48 @@ class RevenueService(
     }
 
     @Transactional(readOnly = true)
+    override fun findAll(): Response<List<RevenueResponseDTO>> {
+
+        logger.info("$TAG, method: findAll, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+
+        val list = revenueRepository.findAll()
+        val dto = list.map { revenue -> RevenueResponseDTO(revenue) }
+
+        logger.info("$TAG, method: findAll SUCCESS, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+
+        return Response(dto)
+
+    }
+
+    @Transactional(readOnly = true)
+    override fun findById(id: Long): Response<RevenueResponseDTO> {
+        logger.info("$TAG, method: findById id: $id, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+
+        val revenueDb = revenueRepository.findById(id).orElseThrow {
+            logger.error("ERROR $TAG, method: findById id: $id, message: ${ProcessingResult.ENTITY_NOT_FOUND_MESSAGE}")
+            throw EntityNotFoundException(ProcessingResult.ENTITY_NOT_FOUND_MESSAGE)
+        }
+
+        logger.info("$TAG, method: findById id: $id SUCCESS, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+
+        return Response(data = RevenueResponseDTO(revenueDb))
+    }
+
+    @Transactional
+    override fun delete(id: Long) {
+        logger.info("$TAG, method: delete id: $id, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+
+        val revenueDb = revenueRepository.findById(id).orElseThrow {
+            logger.error("ERROR $TAG, method: findById id: $id, message: ${ProcessingResult.ENTITY_NOT_FOUND_MESSAGE}")
+            throw EntityNotFoundException(ProcessingResult.ENTITY_NOT_FOUND_MESSAGE)
+        }
+
+        revenueRepository.delete(revenueDb)
+
+        logger.info("$TAG, method: delete SUCCESS id: $id, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+    }
+
+    @Transactional(readOnly = true)
     fun revenueRuleValidation(description: String, date: LocalDate): Boolean {
 
         logger.info("$TAG, method: validatesRegistrationRecipe, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
@@ -63,34 +105,6 @@ class RevenueService(
         }
         return true
 
-    }
-
-    @Transactional(readOnly = true)
-    fun findAll(): Response<List<RevenueResponseDTO>> {
-
-        logger.info("$TAG, method: findAll, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
-
-        val list = revenueRepository.findAll()
-        val dto = list.map { revenue -> RevenueResponseDTO(revenue) }
-
-        logger.info("$TAG, method: findAll SUCCESS, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
-
-        return Response(dto)
-
-    }
-
-    @Transactional(readOnly = true)
-    fun findById(id: Long): Response<RevenueResponseDTO> {
-        logger.info("$TAG, method: findById id: $id, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
-
-        val revenueDb = revenueRepository.findById(id).orElseThrow {
-            logger.error("ERROR $TAG, method: findById id: $id, message: ${ProcessingResult.ENTITY_NOT_FOUND_MESSAGE}")
-            throw EntityNotFoundException(ProcessingResult.ENTITY_NOT_FOUND_MESSAGE)
-        }
-
-        logger.info("$TAG, method: findById id: $id SUCCESS, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
-
-        return Response(data = RevenueResponseDTO(revenueDb))
     }
 
 }

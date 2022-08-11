@@ -7,8 +7,9 @@ import br.com.sistemalima.apiorcamentofamiliar.exceptions.EntityNotFoundExceptio
 import br.com.sistemalima.apiorcamentofamiliar.model.Revenue
 import br.com.sistemalima.apiorcamentofamiliar.request.Request
 import br.com.sistemalima.apiorcamentofamiliar.response.Response
-import br.com.sistemalima.apiorcamentofamiliar.service.RevenueService
+import br.com.sistemalima.apiorcamentofamiliar.service.impl.RevenueService
 import br.com.sistemalima.apiorcamentofamiliar.service.util.ListRevenueFixture
+import br.com.sistemalima.apiorcamentofamiliar.service.util.RevenueFixture
 import br.com.sistemalima.apiorcamentofamiliar.service.util.RevenueRequestDTOFixture
 import br.com.sistemalima.apiorcamentofamiliar.service.util.RevenueResponseDTOFixture
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -196,6 +197,35 @@ class RevenueControlerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(uri)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(MockMvcResultMatchers.status().isNotFound)
+    }
+
+    @Test
+    fun `delete DELETE should return 204 when receiving a recipe id already registered`() {
+
+        val revenueDb = RevenueFixture.build()
+        val idExist = revenueDb.id
+        val uri = UriComponentsBuilder.fromUriString(ApiRoutes.REVENUE_ROUTER + ApiRoutes.PATH_ID).buildAndExpand(idExist).toUri()
+
+        Mockito.doNothing().`when`(revenueService).delete(idExist!!)
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(uri)
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(MockMvcResultMatchers.status().isNoContent)
+
+    }
+
+    @Test
+    fun `delete DELETE should return 404 when receiving an unregistered revenue id`() {
+
+        val idNotExist = 5000L
+        val uri = UriComponentsBuilder.fromUriString(ApiRoutes.REVENUE_ROUTER + ApiRoutes.PATH_ID).buildAndExpand(idNotExist).toUri()
+
+        Mockito.`when`(revenueService.delete(idNotExist)).thenThrow(EntityNotFoundException("Entity not found"))
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(uri)
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(MockMvcResultMatchers.status().isNotFound)
+
     }
 
     private fun toJson(request: Request<RevenueRequestDTO>): String {

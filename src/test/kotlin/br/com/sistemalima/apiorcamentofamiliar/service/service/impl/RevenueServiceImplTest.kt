@@ -1,11 +1,14 @@
-package br.com.sistemalima.apiorcamentofamiliar.service.service
+package br.com.sistemalima.apiorcamentofamiliar.service.service.impl
 
 import br.com.sistemalima.apiorcamentofamiliar.constant.ProcessingResult
 import br.com.sistemalima.apiorcamentofamiliar.exceptions.BadRequestException
+import br.com.sistemalima.apiorcamentofamiliar.exceptions.EntityNotFoundException
 import br.com.sistemalima.apiorcamentofamiliar.model.Revenue
 import br.com.sistemalima.apiorcamentofamiliar.repository.RevenueRepository
-import br.com.sistemalima.apiorcamentofamiliar.service.RevenueService
+import br.com.sistemalima.apiorcamentofamiliar.service.impl.RevenueServiceImpl
 import br.com.sistemalima.apiorcamentofamiliar.service.util.ListRevenueFixture
+import br.com.sistemalima.apiorcamentofamiliar.service.util.RevenueFixture
+import com.nhaarman.mockitokotlin2.any
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -20,10 +23,10 @@ import java.time.LocalDate
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
-class RevenueServiceTest {
+class RevenueServiceImplTest {
 
     @InjectMockKs
-    private lateinit var revenueService: RevenueService
+    private lateinit var revenueServiceImpl: RevenueServiceImpl
 
     @MockK
     private lateinit var revenueRepository: RevenueRepository
@@ -42,7 +45,7 @@ class RevenueServiceTest {
 
         every { revenueRepository.save(revenueEntity) } returns revenueEntity
 
-        Assertions.assertDoesNotThrow { revenueService.create(revenueEntity) }
+        Assertions.assertDoesNotThrow { revenueServiceImpl.create(revenueEntity) }
 
         verify(exactly = 1) {revenueRepository.findByDescription(revenueEntity.description)}
         verify(exactly = 1) {revenueRepository.save(revenueEntity)}
@@ -68,16 +71,17 @@ class RevenueServiceTest {
         every { revenueRepository.findByDescription(revenueEntity.description) } returns listOf(revenue)
 
 
-        val error = assertThrows<BadRequestException> { revenueService.create(revenueEntity)  }
+        val error = assertThrows<BadRequestException> { revenueServiceImpl.create(revenueEntity)  }
 
         assertThat(error.message).isEqualTo(ProcessingResult.BAD_REQUEST_MESSAGE)
 
         verify(exactly = 1) {revenueRepository.findByDescription(revenueEntity.description)}
+        verify(exactly = 0) {revenueRepository.save(revenueEntity)}
 
     }
 
     @Test
-    fun `revenueRuleValidation deve retornar true quando receber uma receita contendo descricao e ano iqual a receita cadastrada mas o mes diferente`() {
+    fun `revenueRuleValidation must return true when receiving a recipe containing a description and year equal to the registered recipe but the month is different`() {
 
         val revenueEntity = Revenue(
             id = null,
@@ -94,7 +98,7 @@ class RevenueServiceTest {
 
         every { revenueRepository.findByDescription(revenueEntity.description) } returns listOf(revenueDb)
 
-        val status = revenueService.revenueRuleValidation(revenueEntity.description, revenueEntity.data)
+        val status = revenueServiceImpl.revenueRuleValidation(revenueEntity.description, revenueEntity.data)
 
         Assertions.assertEquals(true, status)
 
@@ -119,7 +123,7 @@ class RevenueServiceTest {
 
         every { revenueRepository.findByDescription(revenueEntity.description) } returns listOf(revenueDb)
 
-        val status = revenueService.revenueRuleValidation(revenueEntity.description, revenueEntity.data)
+        val status = revenueServiceImpl.revenueRuleValidation(revenueEntity.description, revenueEntity.data)
 
         Assertions.assertEquals(true, status)
 
@@ -144,12 +148,11 @@ class RevenueServiceTest {
 
         every { revenueRepository.findByDescription(revenueEntity.description) } returns listOf(revenueDb)
 
-        val status = revenueService.revenueRuleValidation(revenueEntity.description, revenueEntity.data)
+        val status = revenueServiceImpl.revenueRuleValidation(revenueEntity.description, revenueEntity.data)
 
         Assertions.assertEquals(false, status)
 
         verify(exactly = 1) {revenueRepository.findByDescription(revenueEntity.description)}
-        verify(exactly = 0) {revenueRepository.save(revenueEntity)}
     }
 
     @Test
@@ -158,7 +161,7 @@ class RevenueServiceTest {
 
         every { revenueRepository.findAll() } returns list
 
-        val dto = revenueService.findAll()
+        val dto = revenueServiceImpl.findAll()
 
         verify(exactly = 1) {revenueRepository.findAll()}
         Assertions.assertEquals(2, dto.data.size)
@@ -170,18 +173,36 @@ class RevenueServiceTest {
 
         every { revenueRepository.findAll() } returns list
 
-        val dto = revenueService.findAll()
+        val dto = revenueServiceImpl.findAll()
 
         verify(exactly = 1) {revenueRepository.findAll()}
         Assertions.assertEquals(0, dto.data.size)
     }
 
     @Test
-    fun test() {
-        val name = "PauLo riCardo"
-        val nameFormater = name.lowercase(Locale.getDefault())
+    fun `deve deletar um id de receita cadastrada`() {
+        val revenueDb = RevenueFixture.build()
+        val idExist = revenueDb.id
 
-        println(nameFormater)
+        every { revenueRepository.findById(idExist!!) } returns Optional.of(revenueDb)
+        every { revenueRepository.delete(revenueDb) } returns any()
+
+        Assertions.assertDoesNotThrow { revenueServiceImpl.delete(idExist!!) }
+
+        verify(exactly = 1) {revenueRepository.findById(idExist!!)}
+        verify(exactly = 1) {revenueRepository.delete(revenueDb)}
+    }
+
+    @Test
+    fun `deve lancar exception EntityNotFound quando tentar deletar um id receita inexistente`() {
+        val idNotExist = 5000L
+
+        every { revenueRepository.findById(idNotExist) } returns Optional.empty()
+
+        Assertions.assertThrows(EntityNotFoundException::class.java) {revenueServiceImpl.delete(idNotExist)}
+
+        verify(exactly = 1) {revenueRepository.findById(idNotExist)}
+        verify(exactly = 0) {revenueRepository.delete(any())}
     }
 
 }
