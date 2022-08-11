@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 class RevenueServiceImpl(
     @Autowired
     private val revenueRepository: RevenueRepository
-): RevenueService {
+) : RevenueService {
 
     companion object {
         private val logger = LoggerFactory.getLogger(RevenueServiceImpl::class.java)
@@ -121,7 +121,7 @@ class RevenueServiceImpl(
         }
 
         obj.forEach {
-            if (it.data.month == revenueEntity.data.month && it.data.year == revenueEntity.data.year ) {
+            if (it.data.month == revenueEntity.data.month && it.data.year == revenueEntity.data.year) {
                 return false
             }
         }

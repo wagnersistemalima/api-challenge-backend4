@@ -1,5 +1,6 @@
 package br.com.sistemalima.apiorcamentofamiliar.service.advice
 
+import br.com.sistemalima.apiorcamentofamiliar.constant.ProcessingResult
 import br.com.sistemalima.apiorcamentofamiliar.controller.advice.ExceptionHandler
 import br.com.sistemalima.apiorcamentofamiliar.exceptions.BadRequestException
 import br.com.sistemalima.apiorcamentofamiliar.exceptions.EntityNotFoundException
@@ -19,27 +20,23 @@ class ExceptionHandllerTest {
 
     private  val request = MockHttpServletRequest()
 
-    companion object {
-        private const val testMessage = "test message"
-    }
-
     @Test
-    fun `should ensure that an incoming BadRequestexception will return 400`() {
+    fun `handleBadRequest deve garantir que uma excecao BadRequest de entrada retornara 400`() {
 
-        val response = handller.handleBadRequest(BadRequestException(testMessage), request)
+        val response = handller.handleBadRequest(BadRequestException(ProcessingResult.BAD_REQUEST_MESSAGE_VALIDATION_REVENUE), request)
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), response.data.status)
-        Assertions.assertEquals(testMessage, response.data.message)
+        Assertions.assertEquals(ProcessingResult.BAD_REQUEST_MESSAGE_VALIDATION_REVENUE, response.data.message)
         Assertions.assertEquals(HttpStatus.BAD_REQUEST.name, response.data.error)
     }
 
     @Test
-    fun `must ensure that an incoming EntityNotFoundException will return 404`() {
+    fun `handleNotFound deve garantir que uma EntityNotFoundException recebida retornara 404`() {
 
-        val response = handller.handleNotFound(EntityNotFoundException(testMessage), request)
+        val response = handller.handleNotFound(EntityNotFoundException(ProcessingResult.ENTITY_NOT_FOUND_MESSAGE), request)
 
         Assertions.assertEquals(HttpStatus.NOT_FOUND.value(), response.data.status)
-        Assertions.assertEquals(testMessage, response.data.message)
+        Assertions.assertEquals(ProcessingResult.ENTITY_NOT_FOUND_MESSAGE, response.data.message)
         Assertions.assertEquals(HttpStatus.NOT_FOUND.name, response.data.error)
     }
 }

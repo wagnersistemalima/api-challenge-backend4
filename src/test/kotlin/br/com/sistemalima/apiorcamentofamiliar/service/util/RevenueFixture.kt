@@ -6,7 +6,6 @@ import kotlin.random.Random
 
 
 object RevenueFixture {
-
     fun build(): Revenue {
         return Revenue(
             id = Random.nextInt().toLong(),

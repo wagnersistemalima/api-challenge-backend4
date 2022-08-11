@@ -1,5 +1,6 @@
 package br.com.sistemalima.apiorcamentofamiliar.controller.advice
 
+import br.com.sistemalima.apiorcamentofamiliar.constant.ProcessingResult
 import br.com.sistemalima.apiorcamentofamiliar.dto.ErrorView
 import br.com.sistemalima.apiorcamentofamiliar.exceptions.BadRequestException
 import br.com.sistemalima.apiorcamentofamiliar.exceptions.EntityNotFoundException
@@ -21,7 +22,7 @@ class ExceptionHandler {
             data = ErrorView(
                 status = HttpStatus.BAD_REQUEST.value(),
                 error = HttpStatus.BAD_REQUEST.name,
-                message = exception.message ?: "Validation request",
+                message = exception.message ?: ProcessingResult.BAD_REQUEST_EXCEPTION_MESSAGE,
                 path = request.servletPath
             )
         )
@@ -48,7 +49,20 @@ class ExceptionHandler {
             data = ErrorView(
                 status = HttpStatus.NOT_FOUND.value(),
                 error = HttpStatus.NOT_FOUND.name,
-                message = exception.message ?: "Entity not found",
+                message = exception.message ?: ProcessingResult.ENTITY_NOT_FOUND_MESSAGE,
+                path = request.servletPath
+            )
+        )
+    }
+
+    @ExceptionHandler(Exception::class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    fun handleException(exception: Exception, request: HttpServletRequest): Response<ErrorView> {
+        return Response(
+            data = ErrorView(
+                status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                error = HttpStatus.INTERNAL_SERVER_ERROR.name,
+                message = exception.message ?: ProcessingResult.INTERNAL_SERVER_ERROR_MESSAGE,
                 path = request.servletPath
             )
         )

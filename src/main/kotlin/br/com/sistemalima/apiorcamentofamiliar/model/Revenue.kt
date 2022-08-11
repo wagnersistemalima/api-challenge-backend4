@@ -25,5 +25,4 @@ data class Revenue(
     @field:NotNull
     var data: LocalDate
 
-
 )

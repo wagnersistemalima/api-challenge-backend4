@@ -5,7 +5,6 @@ import br.com.sistemalima.apiorcamentofamiliar.model.Revenue
 import br.com.sistemalima.apiorcamentofamiliar.response.Response
 
 interface RevenueService {
-
     fun create(revenueEntity: Revenue): Response<RevenueResponseDTO>
 
     fun findAll(): Response<List<RevenueResponseDTO>>

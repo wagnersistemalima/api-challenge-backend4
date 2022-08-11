@@ -5,7 +5,6 @@ import br.com.sistemalima.apiorcamentofamiliar.response.Response
 import java.time.LocalDate
 
 object RevenueResponseDTOFixture {
-
     fun build(): Response<RevenueResponseDTO> {
         return Response(
             data = RevenueResponseDTO(

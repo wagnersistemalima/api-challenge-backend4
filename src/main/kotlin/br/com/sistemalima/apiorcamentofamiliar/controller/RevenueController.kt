@@ -28,7 +28,10 @@ class RevenueController(
     }
 
     @PostMapping
-    fun create(@RequestBody @Valid request: Request<RevenueRequestDTO>, uriBuilder: UriComponentsBuilder): ResponseEntity<Response<RevenueResponseDTO>> {
+    fun create(
+        @RequestBody @Valid request: Request<RevenueRequestDTO>,
+        uriBuilder: UriComponentsBuilder
+    ): ResponseEntity<Response<RevenueResponseDTO>> {
 
         logger.info("$TAG, method: create [POST], ${ProcessingResult.START_PROCCESS}")
 
@@ -78,7 +81,10 @@ class RevenueController(
     }
 
     @PutMapping(path = [ApiRoutes.PATH_ID])
-    fun update(@PathVariable id: Long, @RequestBody request: Request<RevenueRequestDTO>): ResponseEntity<Response<RevenueResponseDTO>> {
+    fun update(
+        @PathVariable id: Long,
+        @RequestBody request: Request<RevenueRequestDTO>
+    ): ResponseEntity<Response<RevenueResponseDTO>> {
         logger.info("$TAG, method: update [PUT] id: $id, ${ProcessingResult.START_PROCCESS}")
 
         val revenueEntity = request.data.toModel()
