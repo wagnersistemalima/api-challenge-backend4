@@ -12,7 +12,7 @@ aplicação para controle de orçamento familiar.
 * Serviço de autenticação/autorização para restringir acesso às informações.
 
 
-## Metodologia agil Trello
+## Metodologia agil Scrum
 
 * Ferramenta para gerenciar o desenvolvimento do projeto
 ![sprint active](/image/sprintActive.png)
