@@ -1,4 +1,4 @@
-package br.com.sistemalima.apiorcamentofamiliar.service.service.impl
+package br.com.sistemalima.apiorcamentofamiliar.service.service.impl.revenue
 
 import br.com.sistemalima.apiorcamentofamiliar.constant.ProcessingResult
 import br.com.sistemalima.apiorcamentofamiliar.exceptions.BadRequestException
@@ -8,7 +8,6 @@ import br.com.sistemalima.apiorcamentofamiliar.repository.RevenueRepository
 import br.com.sistemalima.apiorcamentofamiliar.service.impl.RevenueServiceImpl
 import br.com.sistemalima.apiorcamentofamiliar.service.util.ListRevenueFixture
 import br.com.sistemalima.apiorcamentofamiliar.service.util.RevenueFixture
-import com.nhaarman.mockitokotlin2.any
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -185,7 +184,7 @@ class RevenueServiceImplTest {
         val idExist = revenueDb.id
 
         every { revenueRepository.findById(idExist!!) } returns Optional.of(revenueDb)
-        every { revenueRepository.delete(revenueDb) } returns any()
+        every { revenueRepository.delete(revenueDb) } returns Unit
 
         Assertions.assertDoesNotThrow { revenueServiceImpl.delete(idExist!!) }
 

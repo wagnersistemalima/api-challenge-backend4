@@ -4,5 +4,6 @@ class ApiRoutes {
     companion object {
         const val REVENUE_ROUTER = "/receitas"
         const val PATH_ID = "/{id}"
+        const val EXPENSE_ROUTER = "/despesas"
     }
 }
