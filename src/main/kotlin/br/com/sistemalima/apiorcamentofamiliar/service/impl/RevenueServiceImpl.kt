@@ -21,7 +21,7 @@ class RevenueServiceImpl(
 
     companion object {
         private val logger = LoggerFactory.getLogger(RevenueServiceImpl::class.java)
-        private const val TAG = "class: ReceitaService"
+        private const val TAG = "class: RevenueServiceImpl"
     }
 
     @Transactional

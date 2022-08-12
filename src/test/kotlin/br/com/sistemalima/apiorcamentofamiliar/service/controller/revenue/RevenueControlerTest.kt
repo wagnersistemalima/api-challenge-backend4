@@ -1,4 +1,4 @@
-package br.com.sistemalima.apiorcamentofamiliar.service.controller
+package br.com.sistemalima.apiorcamentofamiliar.service.controller.revenue
 
 import br.com.sistemalima.apiorcamentofamiliar.constant.ApiRoutes
 import br.com.sistemalima.apiorcamentofamiliar.constant.ProcessingResult
@@ -68,7 +68,7 @@ class RevenueControlerTest {
 
         val request = Request(
             data = RevenueRequestDTO(
-                description = " ",
+                description = "Salario",
                 value = 1000.0,
                 date = LocalDate.of(2022, 8, 10)
             )
@@ -86,7 +86,7 @@ class RevenueControlerTest {
     }
 
     @Test
-    fun `create POST deve retornar o status 400 quando a descricao nao estiver vazia`() {
+    fun `create POST deve retornar o status 400 quando a descricao estiver vazia`() {
 
         val request = Request(
             data = RevenueRequestDTO(
