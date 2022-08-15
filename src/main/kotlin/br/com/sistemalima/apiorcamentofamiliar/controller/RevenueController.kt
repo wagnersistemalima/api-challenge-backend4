@@ -47,11 +47,11 @@ class RevenueController(
     }
 
     @GetMapping
-    fun findAll(): ResponseEntity<Response<List<RevenueResponseDTO>>> {
+    fun findAll(@RequestParam(required = false) description: String?): ResponseEntity<Response<List<RevenueResponseDTO>>> {
 
         logger.info("$TAG, method: findAll [GET], ${ProcessingResult.START_PROCCESS}")
 
-        val response = revenueService.findAll()
+        val response = revenueService.findAll(description)
 
         logger.info("$TAG, method: findAll [GET] SUCCESS, ${ProcessingResult.END_PROCESS}")
         return ResponseEntity.ok().body(response)

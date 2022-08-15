@@ -18,7 +18,10 @@ data class ExpenseResponseDTO(
 
     @JsonProperty("data")
     @field:JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING)
-    val date: LocalDate
+    val date: LocalDate,
+
+    @JsonProperty("categoria")
+    val category: String?
 ) {
-    constructor(revenue: Expense) : this(revenue.id, revenue.description, revenue.valor, revenue.data)
+    constructor(expense: Expense) : this(expense.id, expense.description, expense.valor, expense.data, expense.category)
 }

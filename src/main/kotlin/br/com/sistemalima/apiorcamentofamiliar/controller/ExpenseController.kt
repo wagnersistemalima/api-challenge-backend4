@@ -47,11 +47,11 @@ class ExpenseController(
     }
 
     @GetMapping
-    fun findAll(): ResponseEntity<Response<List<ExpenseResponseDTO>>> {
+    fun findAll(@RequestParam description: String?): ResponseEntity<Response<List<ExpenseResponseDTO>>> {
 
         logger.info("$TAG, method: findAll [GET], ${ProcessingResult.START_PROCCESS}")
 
-        val response = expenseService.findAll()
+        val response = expenseService.findAll(description)
 
         logger.info("$TAG, method: findAll [GET] SUCCESS, ${ProcessingResult.END_PROCESS}")
         return ResponseEntity.ok().body(response)
@@ -93,6 +93,17 @@ class ExpenseController(
         val response = expenseService.update(expenseEntity, id)
 
         logger.info("$TAG, method: update [PUT] id: $id SUCCESS, ${ProcessingResult.END_PROCESS}")
+
+        return ResponseEntity.ok().body(response)
+    }
+
+    @GetMapping(path = [ApiRoutes.PATH_YEAR_MONTH])
+    fun findByYearMonth(@PathVariable ano: Int, @PathVariable  mes: Int): ResponseEntity<Response<List<ExpenseResponseDTO>>> {
+        logger.info("$TAG, method: findByYearMonth, ano: $ano, mes: $mes, ${ProcessingResult.START_PROCCESS}")
+
+        val response = expenseService.findByYearMonth(ano, mes)
+
+        logger.info("$TAG, method: findByYearMonth, ano: $ano, mes: $mes SUCCESS, ${ProcessingResult.END_PROCESS}")
 
         return ResponseEntity.ok().body(response)
     }

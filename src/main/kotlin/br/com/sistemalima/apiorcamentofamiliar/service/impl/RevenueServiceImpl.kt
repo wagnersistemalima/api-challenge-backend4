@@ -49,12 +49,15 @@ class RevenueServiceImpl(
     }
 
     @Transactional(readOnly = true)
-    override fun findAll(): Response<List<RevenueResponseDTO>> {
+    override fun findAll(description: String?): Response<List<RevenueResponseDTO>> {
 
         logger.info("$TAG, method: findAll, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
 
-        val list = revenueRepository.findAll()
-        val dto = list.map { revenue -> RevenueResponseDTO(revenue) }
+        val revenues = description?.let {
+            revenueRepository.findByDescription(description)
+        } ?: revenueRepository.findAll()
+
+        val dto = revenues.map { revenue -> RevenueResponseDTO(revenue) }
 
         logger.info("$TAG, method: findAll SUCCESS, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
 
@@ -110,6 +113,30 @@ class RevenueServiceImpl(
     }
 
     @Transactional(readOnly = true)
+    override fun findByYearMonth(ano: Int, mes: Int): Response<List<RevenueResponseDTO>> {
+
+        logger.info("$TAG, method: findByYearMonth, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+
+        val statusDateMes = dateValidMes(mes)
+        val statusDateAno = dateValidAno(ano)
+
+        if (!statusDateMes || !statusDateAno) {
+            val listaVazia = listOf<RevenueResponseDTO>()
+            return Response(listaVazia)
+        }
+
+        val list = revenueRepository.findAll()
+
+        val listExpense = filterRevenueAnoMes(list, ano, mes)
+
+        val response = listExpense.map { expense -> RevenueResponseDTO(expense) }
+
+        logger.info("$TAG, method: findByYearMonth SUCCESS, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+
+        return Response(data = response)
+    }
+
+    @Transactional(readOnly = true)
     fun revenueRuleValidation(revenueEntity: Revenue): Boolean {
 
         logger.info("$TAG, method: validatesRegistrationRecipe, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
@@ -153,6 +180,22 @@ class RevenueServiceImpl(
         revenueDb.data = revenueEntity.data
 
         return revenueDb
+    }
+
+    fun dateValidMes(mes: Int): Boolean {
+        logger.info("$TAG, method: dateValidMes, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+        return !(mes > 12 || mes <= 0)
+    }
+
+    fun dateValidAno(ano: Int): Boolean {
+        logger.info("$TAG, method: dateValidAno, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+        return ano <= 2100
+    }
+
+    fun filterRevenueAnoMes(list: MutableList<Revenue>, ano: Int, mes: Int): List<Revenue> {
+        logger.info("$TAG, method: filterRevenueAnoMes, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+        val obj: List<Revenue> = list.filter { it.data.year == ano && it.data.month.value == mes  }
+        return obj
     }
 
 }

@@ -12,7 +12,7 @@ aplicação para controle de orçamento familiar.
 * Serviço de autenticação/autorização para restringir acesso às informações.
 
 
-## Metodologia agil Trello
+## Metodologia agil Scrum
 
 * Ferramenta para gerenciar o desenvolvimento do projeto
 ![sprint active](/image/sprintActive.png)
@@ -44,4 +44,21 @@ aplicação para controle de orçamento familiar.
 
 * Testes unitarios utilizando o MockK, que é uma ferramenta aqui do Kotlin que vem ganhando bastante espaço no mercado.
 
- 
+## Desafio da segunda semana, Mudanças na API
+
+* Após finalizar as atividades da semana 1, foi liberada uma primeira versão da aplicação. Assim, quem utilizá-la pode realizar testes e fornecer feedbacks para o time de desenvolvimento.
+
+* As pessoas gostaram bastante da aplicação e solicitaram um ajuste importante: possibilitar a categorização das despesas. Além disso, solicitaram também mais algumas funcionalidades:
+
+![feature](/image/proxima-feature.png)
+* Busca de receitas e despesas por descrição
+* Listagem de receitas e despesas de um determinado mês
+* Resumo de determinado mês (total de receitas, total de despesas, saldo final e valor total agrupado por categoria)
+
+![sprintActive](/image/sprintActive2.png)
+
+
+## Relatorio do total gasto no mes por categoria
+* Teste com Insomnia
+
+![relatorio](/image/insomnia-json-relatorio.png)

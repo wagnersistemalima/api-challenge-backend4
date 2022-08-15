@@ -1,7 +1,7 @@
 package br.com.sistemalima.apiorcamentofamiliar.service.util
 
 import br.com.sistemalima.apiorcamentofamiliar.dto.ExpenseResponseDTO
-import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueResponseDTO
+import br.com.sistemalima.apiorcamentofamiliar.dto.enum.CategoryStatusEnumDTO
 import br.com.sistemalima.apiorcamentofamiliar.response.Response
 import java.time.LocalDate
 
@@ -12,7 +12,8 @@ object ExpenseResponseDTOFixture {
                 id = 1L,
                 description = "feira do mes",
                 value = 1000.0,
-                date = LocalDate.now()
+                date = LocalDate.now(),
+                category = CategoryStatusEnumDTO.outras
             )
         )
     }

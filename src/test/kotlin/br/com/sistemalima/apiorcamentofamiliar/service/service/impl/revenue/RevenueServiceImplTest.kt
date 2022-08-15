@@ -157,10 +157,11 @@ class RevenueServiceImplTest {
     @Test
     fun `findAll deve retornar uma lista de dto contendo as receitas`() {
         val list = ListRevenueFixture.build()
+        val description: String? = null
 
         every { revenueRepository.findAll() } returns list
 
-        val dto = revenueServiceImpl.findAll()
+        val dto = revenueServiceImpl.findAll(description)
 
         verify(exactly = 1) { revenueRepository.findAll() }
         Assertions.assertEquals(2, dto.data.size)
@@ -169,13 +170,27 @@ class RevenueServiceImplTest {
     @Test
     fun `findAll devera devolver uma lista dto vazia quando nao existirem receitas registadas`() {
         val list = listOf<Revenue>()
+        val description: String? = null
 
         every { revenueRepository.findAll() } returns list
 
-        val dto = revenueServiceImpl.findAll()
+        val dto = revenueServiceImpl.findAll(description)
 
         verify(exactly = 1) { revenueRepository.findAll() }
         Assertions.assertEquals(0, dto.data.size)
+    }
+
+    @Test
+    fun `findAll devera devolver uma lista dto contendo receitas registadas quando receber descricao da receita`() {
+        val list = listOf<Revenue>(RevenueFixture.build())
+        val description = "descrição da receita"
+
+        every { revenueRepository.findByDescription(description) } returns list
+
+        val dto = revenueServiceImpl.findAll(description)
+
+        verify(exactly = 1) { revenueRepository.findByDescription(description) }
+        Assertions.assertEquals(1, dto.data.size)
     }
 
     @Test

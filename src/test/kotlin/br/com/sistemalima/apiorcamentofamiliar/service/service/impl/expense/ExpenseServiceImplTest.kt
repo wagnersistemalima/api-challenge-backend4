@@ -1,6 +1,7 @@
 package br.com.sistemalima.apiorcamentofamiliar.service.service.impl.expense
 
 import br.com.sistemalima.apiorcamentofamiliar.constant.ProcessingResult
+import br.com.sistemalima.apiorcamentofamiliar.dto.ExpenseResponseDTO
 import br.com.sistemalima.apiorcamentofamiliar.exceptions.BadRequestException
 import br.com.sistemalima.apiorcamentofamiliar.exceptions.EntityNotFoundException
 import br.com.sistemalima.apiorcamentofamiliar.model.Expense
@@ -157,10 +158,10 @@ class ExpenseServiceImplTest {
     @Test
     fun `findAll deve retornar uma lista de dto contendo as despesas`() {
         val list = ListExpenseFixture.build()
-
+        val description: String? = null
         every { expenseRepository.findAll() } returns list
 
-        val dto = expenseServiceImpl.findAll()
+        val dto = expenseServiceImpl.findAll(description)
 
         verify(exactly = 1) { expenseRepository.findAll() }
         Assertions.assertEquals(2, dto.data.size)
@@ -169,13 +170,25 @@ class ExpenseServiceImplTest {
     @Test
     fun `findAll devera devolver uma lista dto vazia quando nao existirem despesas registadas`() {
         val list = listOf<Expense>()
-
+        val description: String? = null
         every { expenseRepository.findAll() } returns list
 
-        val dto = expenseServiceImpl.findAll()
+        val dto = expenseServiceImpl.findAll(description)
 
         verify(exactly = 1) { expenseRepository.findAll() }
         Assertions.assertEquals(0, dto.data.size)
+    }
+
+    @Test
+    fun `findAll devera devolver uma lista dto com despesas registadas quando receber a descricao de despesa existente`() {
+        val list = listOf<Expense>(ExpenseFixture.build())
+        val description = "descrição despesa test"
+        every { expenseRepository.findByDescription(description) } returns list
+
+        val dto = expenseServiceImpl.findAll(description)
+
+        verify(exactly = 1) { expenseRepository.findByDescription(description) }
+        Assertions.assertEquals(1, dto.data.size)
     }
 
     @Test
@@ -286,6 +299,51 @@ class ExpenseServiceImplTest {
         }
 
         verify(exactly = 1) { expenseRepository.findById(idNotExist) }
+
+    }
+
+    @Test
+    fun `findByYearMonth deve retornar uma lista de dto contendo despesas por mes quando ano e mes for valido`() {
+        val ano: Int = 2022
+        val mes: Int = 8
+
+        val expense1 = Expense(
+            id = 10L,
+            description = "concerto carro",
+            valor = 200.0,
+            data = LocalDate.of(2022, 8, 25)
+        )
+        val expense2 = Expense(
+            id = 10L,
+            description = "reforma casa",
+            valor = 500.0,
+            data = LocalDate.of(2022, 8, 5)
+        )
+
+        val list = mutableListOf<Expense>(expense1, expense2)
+
+        every { expenseRepository.findAll() } returns list
+
+        val response = expenseServiceImpl.findByYearMonth(ano, mes)
+
+        verify (exactly = 1) {expenseRepository.findAll()}
+
+        Assertions.assertEquals(2, response.data.size)
+
+    }
+
+    @Test
+    fun `findByYearMonth deve retornar uma lista de dto vazia, quando o ano e o mes for invalido e nao chamar o findAll`() {
+        val ano: Int = 2101
+        val mes: Int = 13
+
+        every { expenseRepository.findAll() } returns listOf()
+
+        val response = expenseServiceImpl.findByYearMonth(ano, mes)
+
+        verify (exactly = 0) {expenseRepository.findAll()}
+
+        Assertions.assertEquals(0, response.data.size)
 
     }
 

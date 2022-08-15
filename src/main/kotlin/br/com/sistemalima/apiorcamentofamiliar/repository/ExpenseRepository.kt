@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository
 interface ExpenseRepository: JpaRepository<Expense, Long> {
 
     fun findByDescription(description: String): List<Expense>
+
 }

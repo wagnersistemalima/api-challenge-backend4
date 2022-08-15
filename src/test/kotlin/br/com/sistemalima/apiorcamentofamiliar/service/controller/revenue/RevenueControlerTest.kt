@@ -177,12 +177,12 @@ class RevenueControlerTest {
 
     @Test
     fun `findAll GET deve retornar 200 com uma lista de receitas dto`() {
-
+        val description: String? = null
         val list = ListRevenueFixture.build()
         val dto = list.map { revenue -> RevenueResponseDTO(revenue) }
         val response = Response(data = dto)
 
-        Mockito.`when`(revenueService.findAll()).thenReturn(response)
+        Mockito.`when`(revenueService.findAll(description)).thenReturn(response)
 
         mockMvc.perform(
             MockMvcRequestBuilders.get(ApiRoutes.REVENUE_ROUTER)
@@ -196,14 +196,33 @@ class RevenueControlerTest {
     @Test
     fun `findAll GET deve retornar 200 com uma lista dto vazia quando nao houver receitas registradas`() {
 
+        val description: String? = null
         val list = listOf<Revenue>()
         val dto = list.map { revenue -> RevenueResponseDTO(revenue) }
         val response = Response(data = dto)
 
-        Mockito.`when`(revenueService.findAll()).thenReturn(response)
+        Mockito.`when`(revenueService.findAll(description)).thenReturn(response)
 
         mockMvc.perform(
             MockMvcRequestBuilders.get(ApiRoutes.REVENUE_ROUTER)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json(toJsonListResponse(response)))
+    }
+
+    @Test
+    fun `findAll GET deve retornar 200 com um dto receita quando passar a descricao`() {
+
+        val description = "descrição receita test"
+        val list = listOf<Revenue>(RevenueFixture.build())
+        val dto = list.map { revenue -> RevenueResponseDTO(revenue) }
+        val response = Response(data = dto)
+
+        Mockito.`when`(revenueService.findAll(description)).thenReturn(response)
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get(ApiRoutes.REVENUE_ROUTER + "?description=descrição receita test")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
         )
             .andExpect(MockMvcResultMatchers.status().isOk)

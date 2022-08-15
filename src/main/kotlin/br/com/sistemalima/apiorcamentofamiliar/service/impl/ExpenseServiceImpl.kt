@@ -48,12 +48,15 @@ class ExpenseServiceImpl(
     }
 
     @Transactional(readOnly = true)
-    override fun findAll(): Response<List<ExpenseResponseDTO>> {
+    override fun findAll(description: String?): Response<List<ExpenseResponseDTO>> {
 
         logger.info("$TAG, method: findAll, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
 
-        val list = expenseRepository.findAll()
-        val dto = list.map { expense -> ExpenseResponseDTO(expense) }
+        val expenses = description?.let {
+            expenseRepository.findByDescription(description)
+        }?: expenseRepository.findAll()
+
+        val dto = expenses.map { expense -> ExpenseResponseDTO(expense) }
 
         logger.info("$TAG, method: findAll SUCCESS, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
 
@@ -109,6 +112,30 @@ class ExpenseServiceImpl(
     }
 
     @Transactional(readOnly = true)
+    override fun findByYearMonth(ano: Int, mes: Int): Response<List<ExpenseResponseDTO>> {
+
+        logger.info("$TAG, method: findByYearMonth, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+
+        val statusDateMes = dateValidMes(mes)
+        val statusDateAno = dateValidAno(ano)
+
+        if (!statusDateMes || !statusDateAno) {
+            val listaVazia = listOf<ExpenseResponseDTO>()
+            return Response(listaVazia)
+        }
+
+        val list = expenseRepository.findAll()
+
+        val listExpense = filterExpenseAnoMes(list, ano, mes)
+
+        val response = listExpense.map { expense -> ExpenseResponseDTO(expense) }
+
+        logger.info("$TAG, method: findByYearMonth SUCCESS, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+
+        return Response(data = response)
+    }
+
+    @Transactional(readOnly = true)
     fun expenseRuleValidation(expenseEntity: Expense): Boolean {
 
         logger.info("$TAG, method: expenseRuleValidation, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
@@ -150,8 +177,25 @@ class ExpenseServiceImpl(
         expenseDb.description = expenseEntity.description
         expenseDb.valor = expenseEntity.valor
         expenseDb.data = expenseEntity.data
+        expenseDb.category = expenseEntity.category
 
         return expenseDb
+    }
+
+    fun dateValidMes(mes: Int): Boolean {
+        logger.info("$TAG, method: dateValidMes, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+        return !(mes > 12 || mes <= 0)
+    }
+
+    fun dateValidAno(ano: Int): Boolean {
+        logger.info("$TAG, method: dateValidAno, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+        return ano <= 2100
+    }
+
+    fun filterExpenseAnoMes(list: MutableList<Expense>, ano: Int, mes: Int): List<Expense> {
+        logger.info("$TAG, method: filterExpenseAnoMes, ${ProcessingResult.GET_MOVIMENT_REQUEST}")
+        val obj: List<Expense> = list.filter { it.data.year == ano && it.data.month.value == mes  }
+        return obj
     }
 
 }
