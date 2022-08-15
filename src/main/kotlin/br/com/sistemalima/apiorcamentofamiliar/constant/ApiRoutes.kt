@@ -5,5 +5,7 @@ class ApiRoutes {
         const val REVENUE_ROUTER = "/receitas"
         const val PATH_ID = "/{id}"
         const val EXPENSE_ROUTER = "/despesas"
+        const val PATH_YEAR_MONTH = "/{ano}/{mes}"
+        const val SUMMARY_ROUTER = "/resumo"
     }
 }

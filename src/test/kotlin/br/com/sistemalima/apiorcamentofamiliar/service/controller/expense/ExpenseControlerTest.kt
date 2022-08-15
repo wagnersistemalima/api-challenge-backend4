@@ -16,7 +16,6 @@ import br.com.sistemalima.apiorcamentofamiliar.service.util.ExpenseResponseDTOFi
 import br.com.sistemalima.apiorcamentofamiliar.service.util.ListExpenseFixture
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -24,7 +23,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -178,12 +176,12 @@ class ExpenseControlerTest {
 
     @Test
     fun `findAll GET deve retornar 200 com uma lista de despesas dto`() {
-
+        val description: String? = null
         val list = ListExpenseFixture.build()
         val dto = list.map { expense -> ExpenseResponseDTO(expense) }
         val response = Response(data = dto)
 
-        Mockito.`when`(expenseService.findAll()).thenReturn(response)
+        Mockito.`when`(expenseService.findAll(description)).thenReturn(response)
 
         mockMvc.perform(
             MockMvcRequestBuilders.get(ApiRoutes.EXPENSE_ROUTER)
@@ -197,14 +195,33 @@ class ExpenseControlerTest {
     @Test
     fun `findAll GET deve retornar 200 com uma lista dto vazia quando nao houver despesas registradas`() {
 
+        val description: String? = null
         val list = listOf<Expense>()
         val dto = list.map { expense -> ExpenseResponseDTO(expense) }
         val response = Response(data = dto)
 
-        Mockito.`when`(expenseService.findAll()).thenReturn(response)
+        Mockito.`when`(expenseService.findAll(description)).thenReturn(response)
 
         mockMvc.perform(
             MockMvcRequestBuilders.get(ApiRoutes.EXPENSE_ROUTER)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json(toJsonListResponse(response)))
+    }
+
+    @Test
+    fun `findAll GET deve retornar 200 com uma lista dto despesas quando passar a descricao da despesa`() {
+
+        val description = "descrição despesa test"
+        val list = listOf(ExpenseFixture.build())
+        val dto = list.map { expense -> ExpenseResponseDTO(expense) }
+        val response = Response(data = dto)
+
+        Mockito.`when`(expenseService.findAll(description)).thenReturn(response)
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.get(ApiRoutes.EXPENSE_ROUTER + "?description=descrição despesa test")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
@@ -334,7 +351,8 @@ class ExpenseControlerTest {
         val expenseEntity = request.data.toModel()
 
         val uri =
-            UriComponentsBuilder.fromUriString(ApiRoutes.EXPENSE_ROUTER + ApiRoutes.PATH_ID).buildAndExpand(idNotExist)
+            UriComponentsBuilder.fromUriString(ApiRoutes.EXPENSE_ROUTER + ApiRoutes.PATH_ID)
+                .buildAndExpand(idNotExist)
                 .toUri()
 
         Mockito.`when`(expenseService.update(expenseEntity, idNotExist))
@@ -346,6 +364,25 @@ class ExpenseControlerTest {
         )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
 
+    }
+
+    @Test
+    fun `findByYearMonth GET deve retornar 200 com a listagem de despesa por mes, quando passar o ano e mes`() {
+
+        val ano: Int = 2022
+        val mes: Int = 8
+        val expenses = ListExpenseFixture.build()
+        val listDto = expenses.map { expense -> ExpenseResponseDTO(expense) }
+        val response = Response(data = listDto)
+        val uri = UriComponentsBuilder.fromUriString(ApiRoutes.EXPENSE_ROUTER + ApiRoutes.PATH_YEAR_MONTH)
+            .buildAndExpand(ano, mes).toUri()
+
+
+        Mockito.`when`(expenseService.findByYearMonth(ano, mes)).thenReturn(response)
+
+        mockMvc.perform(MockMvcRequestBuilders.get(uri).contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.content().json(toJsonListResponse(response)))
     }
 
     private fun toJson(request: Request<ExpenseRequestDTO>): String {

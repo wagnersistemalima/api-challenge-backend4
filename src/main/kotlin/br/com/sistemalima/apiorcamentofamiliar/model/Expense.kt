@@ -1,5 +1,6 @@
 package br.com.sistemalima.apiorcamentofamiliar.model
 
+import br.com.sistemalima.apiorcamentofamiliar.dto.enum.CategoryStatusEnumDTO
 import java.time.LocalDate
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
@@ -23,6 +24,8 @@ data class Expense(
     var valor: Double,
 
     @field:NotNull
-    var data: LocalDate
+    var data: LocalDate,
+
+    var category: String = CategoryStatusEnumDTO.outras
 
 )
