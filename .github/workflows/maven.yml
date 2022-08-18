@@ -37,9 +37,9 @@ jobs:
       # uses: docker/build-push-action@c84f38281176d4c9cdb1626ffafcd6b3911b5d94
       uses: docker/build-push-action@v3.1.1
       with:
-        context: ./
-        file: ./Dockerfile
-        tags: ${{github.run_number}}
+        lfs: 'true'
+        run: docker build -t api-orcamento-familiar:v1 -f Dockerfile .
+
 
 
 
