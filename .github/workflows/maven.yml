@@ -40,7 +40,9 @@ jobs:
         context: ./
         file: ./Dockerfile
         push: true
-        tags: latest
+        tags: |
+          wagnersistemalima/api-orcamento-familiar:latest
+          wagnersistemalima/api-orcamento-familiar:${{github.run_number}}
 
 
 
