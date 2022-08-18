@@ -53,4 +53,5 @@ class SummaryControllerTest {
     private fun toJson(response: Response<SummaryResponseDTO>): String {
         return objectMapper.writeValueAsString(response)
     }
+
 }

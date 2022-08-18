@@ -1,6 +1,5 @@
 package br.com.sistemalima.apiorcamentofamiliar.service
 
-import br.com.sistemalima.apiorcamentofamiliar.dto.ExpenseResponseDTO
 import br.com.sistemalima.apiorcamentofamiliar.dto.RevenueResponseDTO
 import br.com.sistemalima.apiorcamentofamiliar.model.Revenue
 import br.com.sistemalima.apiorcamentofamiliar.response.Response
