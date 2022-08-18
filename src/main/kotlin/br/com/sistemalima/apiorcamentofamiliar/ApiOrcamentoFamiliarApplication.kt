@@ -7,6 +7,5 @@ import org.springframework.boot.runApplication
 class ApiOrcamentoFamiliarApplication
 
 fun main(args: Array<String>) {
-
 	runApplication<ApiOrcamentoFamiliarApplication>(*args)
 }
