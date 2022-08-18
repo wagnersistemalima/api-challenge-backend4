@@ -39,8 +39,14 @@ jobs:
       with:
         context: ./
         file: ./Dockerfile
-        push: true
-        tag: v1
+        tags:
+          wagnersistemalima/api-orcamento-familiar:latest
+          wagnersistemalima/api-orcamento-familiar:${{github.run_number}}
+
+
+
+
+
 
 
 
