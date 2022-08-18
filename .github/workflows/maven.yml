@@ -41,7 +41,7 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: latest
-        target: wagnersistemalima/api-orcamento-familiar
+
 
 
 
