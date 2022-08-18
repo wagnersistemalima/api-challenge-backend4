@@ -44,7 +44,6 @@ class RevenueControlerTest {
     @MockBean
     private lateinit var revenueService: RevenueService
 
-
     @Test
     fun `create POST deve retornar o status 201`() {
 
