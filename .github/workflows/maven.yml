@@ -42,4 +42,4 @@ jobs:
         push: true
         tags:
           wagnersistemalima/api-orcamento-familiar:latest
-          wagnersistemalima/api-orcamento-familiar:${{github.run_number}}
+
